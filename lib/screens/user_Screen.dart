@@ -14,14 +14,49 @@ class UserScreen extends StatelessWidget {
             icon: Icon(Icons.logout),
             onPressed: () async {
               await AuthServices().signOut();
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()));
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => LoginScreen()),
+              );
             },
           ),
         ],
       ),
-      body: Center(
-        child: Text("Welcome hiiiiiiiii, User!"),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(
+            child: Text("Welcome, User!"),
+          ),
+          SizedBox(
+              height: 20), // Adds some space between the text and the button
+          ElevatedButton(
+            onPressed: () {
+              // Add the functionality for the button here
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text("Button Pressed"),
+                    content: Text("You pressed the button!"),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text("OK"),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            child: Text("Press Me"), // Button label
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+            ),
+          ),
+        ],
       ),
     );
   }
