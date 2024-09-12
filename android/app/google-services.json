@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "658832220248",
+    "project_id": "agromart-850a8",
+    "storage_bucket": "agromart-850a8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:658832220248:android:82056512f25ae67c0b6a2d",
+        "android_client_info": {
+          "package_name": "com.example.agro_mart"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAngZMI85OQgt4YuPkVKHRVLkGBC-6KiS4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
