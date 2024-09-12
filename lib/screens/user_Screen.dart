@@ -37,7 +37,7 @@ class UserScreen extends StatelessWidget {
                 context: context,
                 builder: (context) {
                   return AlertDialog(
-                    title: Text("Button Pressed"),
+                    title: Text("Pressed"),
                     content: Text("You pressed the button!"),
                     actions: [
                       TextButton(
