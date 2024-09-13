@@ -1,5 +1,6 @@
+import 'package:agro_mart/screens/farmer/bottomNav.dart';
 import 'package:agro_mart/screens/login_screen.dart';
-import 'package:agro_mart/services/auth_services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class FarmerScreen extends StatefulWidget {
@@ -14,22 +15,19 @@ class _FarmerScreenState extends State<FarmerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Farmer Page"),
-        automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: const Icon(Icons.logout),
             onPressed: () async {
-              await AuthServices().signOut(); // Call signOut method from AuthServices
+              // Add logout functionality
+              await FirebaseAuth.instance.signOut();
               Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => LoginScreen())); // Navigate to LoginScreen
+                  MaterialPageRoute(builder: (context) => const LoginScreen()));
             },
-          ),
+          )
         ],
       ),
-      body: Center(
-        child: Text("Welcome, Farmer!"),
-      ),
+      body: BottomNav(),
     );
   }
 }

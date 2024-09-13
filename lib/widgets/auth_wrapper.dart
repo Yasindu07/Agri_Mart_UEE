@@ -1,5 +1,5 @@
 import 'package:agro_mart/screens/admin_screen.dart';
-import 'package:agro_mart/screens/farmer_screen.dart';
+import 'package:agro_mart/screens/farmer/farmer_screen.dart';
 import 'package:agro_mart/screens/signup_screen.dart';
 import 'package:agro_mart/screens/transporter_screen.dart';
 import 'package:agro_mart/screens/user_Screen.dart';
