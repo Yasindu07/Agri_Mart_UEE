@@ -4,6 +4,7 @@ import 'package:agro_mart/widgets/auth_wrapper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -36,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(height: screenHeight * 0.1), // Responsive spacing
               Text(
                 'Welcome \nback!',
-                style: TextStyle(
+                style: GoogleFonts.poppins(
                   fontSize: screenWidth * 0.13, // Responsive font size
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -45,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(height: screenHeight * 0.01),
               Text(
                 'Sign in to continue',
-                style: TextStyle(
+                style: GoogleFonts.poppins(
                   fontSize: screenWidth * 0.065, // Responsive font size
                   color: Colors.grey,
                 ),
@@ -74,8 +75,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () {},
                   child: Text(
                     'Forget Password?',
-                    style: TextStyle(
-                        color: Colors.grey, fontSize: screenWidth * 0.05),
+                    style: GoogleFonts.poppins(
+                      color: Colors.grey,
+                      fontSize: screenWidth * 0.05, // Responsive font size
+                    ),
                   ),
                 ),
               ),
@@ -95,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         msg: "Logged In Successfully",
                         toastLength: Toast.LENGTH_SHORT,
                         gravity: ToastGravity.BOTTOM,
-                        backgroundColor: Colors.grey,
+                        backgroundColor: Color(0xFF56dc6e),
                         textColor: Colors.white,
                         fontSize: 16,
                       );
@@ -109,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         msg: "Invalid Email or Password",
                         toastLength: Toast.LENGTH_SHORT,
                         gravity: ToastGravity.BOTTOM,
-                        backgroundColor: Colors.grey,
+                        backgroundColor: Color.fromARGB(255, 238, 118, 102),
                         textColor: Colors.white,
                         fontSize: 16,
                       );
@@ -123,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   child: Text(
                     'Sign In',
-                    style: TextStyle(
+                    style: GoogleFonts.poppins(
                       color: Colors.white,
                       fontSize: screenWidth * 0.05, // Responsive font size
                     ),
@@ -138,9 +141,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Text(
                       "Don't have an account?",
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                         color: Colors.grey,
-                        fontSize: screenWidth * 0.04, // Responsive font size
+                        fontSize: screenWidth * 0.05, // Responsive font size
                       ),
                     ),
                     TextButton(
@@ -153,7 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                       child: Text(
                         'Sign Up',
-                        style: TextStyle(
+                        style: GoogleFonts.poppins(
                           color: Color(0xFF28A745),
                           fontWeight: FontWeight.bold,
                           fontSize: screenWidth * 0.045, // Responsive font size
