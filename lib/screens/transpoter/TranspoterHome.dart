@@ -16,6 +16,7 @@ class TranspoterHome extends StatelessWidget {
               onPressed: () {},
             ),
           ],
+          automaticallyImplyLeading: false,
           centerTitle: true,
         ),
         body: Padding(

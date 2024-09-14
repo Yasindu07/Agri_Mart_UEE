@@ -2,6 +2,7 @@ import 'package:agro_mart/screens/admin_screen.dart';
 import 'package:agro_mart/screens/farmer/farmer_screen.dart';
 import 'package:agro_mart/screens/signup_screen.dart';
 import 'package:agro_mart/screens/transporter_screen.dart';
+import 'package:agro_mart/screens/transpoter/formOrHome.dart';
 import 'package:agro_mart/screens/user_Screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -30,7 +31,7 @@ class AuthWrapper extends StatelessWidget {
                     case 'farmer':
                       return FarmerScreen();
                     case 'transporter':
-                      return TransporterScreen();
+                      return FormOrHome();
                     case 'user':
                       return UserScreen();
                     default:

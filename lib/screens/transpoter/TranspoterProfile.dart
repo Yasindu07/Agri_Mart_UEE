@@ -1,3 +1,4 @@
+import 'package:agro_mart/screens/transporter_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:agro_mart/services/auth_services.dart';
@@ -20,7 +21,10 @@ class _TranspoterProfileState extends State<TranspoterProfile> {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => TransporterScreen()));
+          },
         ),
         title: Text(
           "My Profile",
