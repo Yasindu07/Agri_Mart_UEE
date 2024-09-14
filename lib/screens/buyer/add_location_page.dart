@@ -12,7 +12,7 @@ class AddLocationPage extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            // Handle back action
+            Navigator.pop(context); // Handle back action
           },
         ),
         actions: [
@@ -58,25 +58,6 @@ class AddLocationPage extends StatelessWidget {
             _buildAddButton(),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 4, // Profile tab selected
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart), label: 'Cart'),
-          BottomNavigationBarItem(icon: Icon(Icons.group), label: 'Community'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle), label: 'Profile'),
-        ],
-        onTap: (index) {
-          // Handle bottom nav tap
-        },
       ),
     );
   }

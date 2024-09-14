@@ -1,7 +1,4 @@
-// ignore_for_file: sort_child_properties_last, use_key_in_widget_constructors
-
 import 'package:flutter/material.dart';
-import '../user_Screen.dart'; // Make sure to import your HomePage class
 
 class CartPage extends StatelessWidget {
   @override
@@ -49,40 +46,6 @@ class CartPage extends StatelessWidget {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 2, // Cart tab selected
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart), label: 'Cart'),
-          BottomNavigationBarItem(icon: Icon(Icons.group), label: 'Community'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle), label: 'Profile'),
-        ],
-        onTap: (index) {
-          // Handle bottom nav tap
-          if (index == 0) {
-            // Navigate to the HomePage
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
-          } else if (index == 1) {
-            // Handle search navigation (if needed)
-          } else if (index == 2) {
-            // Stay on Cart page (already on it)
-          } else if (index == 3) {
-            // Handle community navigation (if needed)
-          } else if (index == 4) {
-            // Handle profile navigation (if needed)
-          }
-        },
       ),
     );
   }
