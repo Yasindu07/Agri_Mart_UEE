@@ -3,6 +3,7 @@ import 'package:agro_mart/services/auth_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -44,9 +45,10 @@ class _SignupScreenState extends State<SignupScreen> {
                     children: [
                       Text(
                         'Welcome!',
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.13,
+                        style: GoogleFonts.poppins(
+                          fontSize: screenWidth * 0.10,
                           fontWeight: FontWeight.w800,
+                          color: Colors.black,
                         ),
                       ),
                       Stack(
@@ -81,8 +83,9 @@ class _SignupScreenState extends State<SignupScreen> {
                   //SizedBox(height: screenHeight * 0.01),
                   Text(
                     'Sign up',
-                    style: TextStyle(
+                    style: GoogleFonts.poppins(
                       fontSize: screenWidth * 0.055,
+                      fontWeight: FontWeight.w600,
                       color: Colors.grey[600],
                     ),
                   ),
@@ -128,7 +131,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             msg: "Passwords do not match",
                             toastLength: Toast.LENGTH_SHORT,
                             gravity: ToastGravity.BOTTOM,
-                            backgroundColor: Colors.grey,
+                            backgroundColor: Color.fromARGB(255, 238, 118, 102),
                             textColor: Colors.white,
                             fontSize: 16.0,
                           );
@@ -146,7 +149,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 "Account created successfully. Now you can login!",
                             toastLength: Toast.LENGTH_SHORT,
                             gravity: ToastGravity.BOTTOM,
-                            backgroundColor: Colors.grey,
+                            backgroundColor: Color(0xFF56dc6e),
                             textColor: Colors.white,
                             fontSize: 16.0,
                           );
@@ -160,7 +163,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             msg: "Failed to create account",
                             toastLength: Toast.LENGTH_SHORT,
                             gravity: ToastGravity.BOTTOM,
-                            backgroundColor: Colors.grey,
+                            backgroundColor: Color.fromARGB(255, 238, 118, 102),
                             textColor: Colors.white,
                             fontSize: 16.0,
                           );
@@ -168,7 +171,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       },
                       child: Text(
                         'Sign Up',
-                        style: TextStyle(
+                        style: GoogleFonts.poppins(
                           fontSize: screenWidth * 0.045,
                           color: Colors.white,
                         ),
@@ -180,7 +183,11 @@ class _SignupScreenState extends State<SignupScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Have an account? "),
+                        Text(
+                          "Have an account? ",
+                          style: GoogleFonts.poppins(
+                              fontSize: screenWidth * 0.025),
+                        ),
                         GestureDetector(
                           onTap: () {
                             Navigator.push(
@@ -191,7 +198,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           },
                           child: Text(
                             "Sign In",
-                            style: TextStyle(
+                            style: GoogleFonts.poppins(
                               color: Color(0xFF28A745),
                               fontWeight: FontWeight.bold,
                               fontSize: screenWidth * 0.045,
