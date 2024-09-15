@@ -1,8 +1,5 @@
-// ignore_for_file: unused_import
-
 import 'package:flutter/material.dart';
 import 'add_location_page.dart'; // Import the Add Location page
-import '../user_Screen.dart'; // Import the HomePage class
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -34,40 +31,6 @@ class ProfilePage extends StatelessWidget {
             _buildAddLocationButton(context),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 4, // Profile tab selected
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart), label: 'Cart'),
-          BottomNavigationBarItem(icon: Icon(Icons.group), label: 'Community'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle), label: 'Profile'),
-        ],
-        onTap: (index) {
-          // Handle bottom nav tap
-          if (index == 0) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HomePage(),
-              ),
-            );
-          } else if (index == 1) {
-            // Handle search tab navigation if needed
-          } else if (index == 2) {
-            // Handle cart tab navigation if needed
-          } else if (index == 3) {
-            // Handle community tab navigation if needed
-          }
-          // Profile tab is already selected, no action needed
-        },
       ),
     );
   }
