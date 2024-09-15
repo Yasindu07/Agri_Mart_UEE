@@ -163,70 +163,80 @@ class _TransporterFormPageState extends State<TransporterFormPage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(
-              "Join our network of trusted transporters and start earning today!",
-              style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey),
-            ),
-            const SizedBox(height: 16),
+          child: AbsorbPointer(
+            absorbing: _isLoading,
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(
+                "Join our network of trusted transporters and start earning today!",
+                style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey),
+              ),
+              const SizedBox(height: 16),
 
-            // Only show the form if the user is a transporter
+              // Only show the form if the user is a transporter
 
-            Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  _buildInputField(
-                    controller: _licensePlateController,
-                    label: "Vehicle License Plate",
-                    icon: Icons.directions_car,
-                  ),
-                  _buildInputField(
-                    controller: _licenseNumberController,
-                    label: "License Number",
-                    icon: Icons.card_membership,
-                  ),
-                  _buildUploadField("Upload License Image", true),
-                  _buildUploadField("Vehicle Insurance", false),
-                  _buildInputField(
-                    controller: _bankNameController,
-                    label: "Bank Name",
-                    icon: Icons.account_balance,
-                  ),
-                  _buildInputField(
-                    controller: _accountNumberController,
-                    label: "Bank Account Number",
-                    icon: Icons.account_box,
-                  ),
-                  const SizedBox(height: 16),
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    _buildInputField(
+                      controller: _licensePlateController,
+                      label: "Vehicle License Plate",
+                      icon: Icons.directions_car,
+                    ),
+                    _buildInputField(
+                      controller: _licenseNumberController,
+                      label: "License Number",
+                      icon: Icons.card_membership,
+                    ),
+                    _buildUploadField("Upload License Image", true),
+                    _buildUploadField("Vehicle Insurance", false),
+                    _buildInputField(
+                      controller: _bankNameController,
+                      label: "Bank Name",
+                      icon: Icons.account_balance,
+                    ),
+                    _buildInputField(
+                      controller: _accountNumberController,
+                      label: "Bank Account Number",
+                      icon: Icons.account_box,
+                    ),
+                    const SizedBox(height: 16),
 
-                  // Submit Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _submitForm,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                    // Submit Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _isLoading
+                            ? null
+                            : _submitForm, // Disable button during loading
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          backgroundColor: Colors.green,
                         ),
-                        backgroundColor: Colors.green,
-                      ),
-                      child: Text(
-                        "Submit",
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                        child: _isLoading
+                            ? CircularProgressIndicator(
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                              )
+                            : Text(
+                                "Submit",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ]),
+            ]),
+          ),
         ),
       ),
     );

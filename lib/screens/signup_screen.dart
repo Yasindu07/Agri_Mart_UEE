@@ -186,7 +186,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         Text(
                           "Have an account? ",
                           style: GoogleFonts.poppins(
-                              fontSize: screenWidth * 0.025),
+                              fontSize: screenWidth * 0.045),
                         ),
                         GestureDetector(
                           onTap: () {

@@ -47,6 +47,14 @@ class _FormOrHomeState extends State<FormOrHome> {
           devtools
               .log('Transporter Documents Found: ${transporterSnapshot.size}');
 
+          // transporterModel = transporterSnapshot.docs
+          //     .map((doc) => Transporter.fromDocumentSnapshot(doc))
+          //     .firstWhere((transporter) => transporter.id == user.uid,
+          //         orElse: () => null);
+
+          // devtools.log(
+          //     'Transporter Document Exists: ${transporterModel.toString()}');
+
           if (transporterSnapshot.size > 0) {
             _isTransporterDetailsSubmitted = true;
           }

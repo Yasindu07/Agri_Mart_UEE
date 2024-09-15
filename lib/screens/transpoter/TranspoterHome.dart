@@ -1,8 +1,89 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
-class TranspoterHome extends StatelessWidget {
+class TranspoterHome extends StatefulWidget {
   const TranspoterHome({super.key});
+
+  @override
+  State<TranspoterHome> createState() => _TranspoterHomeState();
+}
+
+class _TranspoterHomeState extends State<TranspoterHome> {
+  String _currentAddress = "Fetching location...";
+  Position? _currentPosition;
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Check if location services are enabled
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled, request user to enable it
+      setState(() {
+        _currentAddress = "Location services are disabled.";
+      });
+      return;
+    }
+
+    // Check location permissions
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, display an error
+        setState(() {
+          _currentAddress = "Location permissions are denied.";
+        });
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately
+      setState(() {
+        _currentAddress = "Location permissions are permanently denied.";
+      });
+      return;
+    }
+
+    // When permissions are granted, get the current position
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    setState(() {
+      _currentPosition = position;
+    });
+
+    // Get the address based on the latitude and longitude
+    _getAddressFromLatLng(position);
+  }
+
+  Future<void> _getAddressFromLatLng(Position position) async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      Placemark place = placemarks[0];
+
+      setState(() {
+        _currentAddress =
+            "${place.street}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,12 +111,19 @@ class TranspoterHome extends StatelessWidget {
                 children: [
                   const Icon(Icons.location_on, color: Colors.green),
                   const SizedBox(width: 8),
-                  Text(
-                    "High Level road, Matara",
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  Expanded(
+                    child: _currentAddress != null
+                        ? Text(
+                            _currentAddress!,
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            maxLines: 1, // Set a max line limit (optional)
+                            overflow: TextOverflow
+                                .ellipsis, // Add ellipsis if text is too long
+                          )
+                        : const Text("Loading location..."),
                   ),
                 ],
               ),
