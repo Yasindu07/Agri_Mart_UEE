@@ -85,6 +85,26 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Add Product',
+              style: GoogleFonts.poppins(
+                fontSize: screenWidth * 0.06,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            Text(
+              'step 1/2',
+              style: GoogleFonts.poppins(
+                fontSize: screenWidth * 0.04,
+                color: Colors.green,
+              ),
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(
@@ -95,26 +115,7 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: screenHeight * 0.01),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Add Product',
-                    style: GoogleFonts.poppins(
-                      fontSize: screenWidth * 0.06,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  Text(
-                    'step 1/2',
-                    style: GoogleFonts.poppins(
-                      fontSize: screenWidth * 0.04,
-                      color: Colors.green,
-                    ),
-                  ),
-                ],
-              ),
+
               SizedBox(height: screenHeight * 0.03),
               // Camera and Gallery Icon Row
               Row(
