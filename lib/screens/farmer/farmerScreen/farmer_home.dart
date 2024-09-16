@@ -17,43 +17,50 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        centerTitle: true,
-        title: Text(
-          'Product List',
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-            fontSize: screenWidth * 0.06, // Responsive font size
-          ),
-        ),
-        leading: Icon(Icons.menu, color: Colors.black),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: screenWidth * 0.05),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return FarmerProductAdd();
-                    },
-                  ),
-                );
-              },
-              child: CircleAvatar(
-                backgroundColor: Colors.green,
-                child: Icon(Icons.add, color: Colors.white),
-              ),
-            ),
-          ),
-        ],
+        title: Text('Hi Yasindu!',
+            style: GoogleFonts.poppins(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            )),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment
+                  .spaceBetween, // Distributes space between children
+              children: [
+                Expanded(
+                  child: Text(
+                    'Product List',
+                    textAlign: TextAlign
+                        .center, // Center text within the Expanded widget
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: screenWidth * 0.06, // Responsive font size
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return FarmerProductAdd();
+                        },
+                      ),
+                    );
+                  },
+                  child: CircleAvatar(
+                    backgroundColor: Colors.green,
+                    child: Icon(Icons.add, color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+
             // Categories Row
             Padding(
               padding: EdgeInsets.symmetric(
