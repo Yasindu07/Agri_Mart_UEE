@@ -187,6 +187,7 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
             SizedBox(width: screenWidth * 0.03),
             // Product Details
             Expanded(
+              // <-- This ensures the content won't overflow the available space.
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -209,6 +210,7 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
                 ],
               ),
             ),
+            // Product Actions (PID, weight, icons)
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [

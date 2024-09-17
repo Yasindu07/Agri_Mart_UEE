@@ -1,9 +1,16 @@
+import 'package:agro_mart/model/product_model.dart';
+import 'package:agro_mart/screens/farmer/farmerScreen/farmer_home.dart';
 import 'package:agro_mart/services/location_service.dart';
+import 'package:agro_mart/services/product_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:path/path.dart';
+import 'dart:developer' as devtools;
 
 class FarmerProductAdd extends StatefulWidget {
   const FarmerProductAdd({super.key});
@@ -13,16 +20,92 @@ class FarmerProductAdd extends StatefulWidget {
 }
 
 class _FarmerProductAddState extends State<FarmerProductAdd> {
+  final ProductService _productService = ProductService();
+
   final List<File?> _images = List<File?>.filled(4, null);
   final ImagePicker _picker = ImagePicker();
-
   final LocationService _locationService = LocationService();
+
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
+
+  String? _selectedCategory;
 
   @override
   void initState() {
     super.initState();
     _setCurrentLocation();
+  }
+
+  Future<void> _submitProduct(BuildContext context) async {
+    try {
+      // First, upload images to Firebase Storage and get the URLs
+      List<String> imageUrls = await _uploadImages();
+
+      // Get the current user's ID
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId == null) {
+        throw Exception('User not logged in');
+      }
+
+      // Then create the product object with the image URLs and user ID
+      Product product = Product(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: _titleController.text,
+        category: _selectedCategory ?? 'Unknown',
+        quantity: double.parse(_quantityController.text),
+        description: _descriptionController.text,
+        location: _locationController.text,
+        pricePerKg: double.parse(_priceController.text),
+        imageUrls: imageUrls,
+        userId: userId, // Pass the user ID here
+      );
+
+      // Save product to Firestore
+      await _productService.addProduct(product);
+
+      devtools.log('Product added successfully with ID: ${product.id}');
+
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => FarmerHomePage()));
+
+      // Clear form fields after submission
+      _titleController.clear();
+      _descriptionController.clear();
+      _quantityController.clear();
+      _priceController.clear();
+      setState(() {
+        _images.fillRange(0, 4, null);
+      });
+    } catch (e) {
+      devtools.log('Error adding product: $e');
+    }
+  }
+
+  Future<List<String>> _uploadImages() async {
+    List<String> imageUrls = [];
+    for (var image in _images) {
+      if (image != null) {
+        // Get file name and create a storage reference
+        String fileName = basename(image.path);
+        Reference storageRef =
+            FirebaseStorage.instance.ref().child('products/$fileName');
+
+        // Upload the file to Firebase Storage
+        UploadTask uploadTask = storageRef.putFile(image);
+
+        // Wait until the upload is complete, then get the download URL
+        TaskSnapshot snapshot = await uploadTask.whenComplete(() => null);
+        String downloadUrl = await snapshot.ref.getDownloadURL();
+
+        // Add the image URL to the list
+        imageUrls.add(downloadUrl);
+      }
+    }
+    return imageUrls;
   }
 
   // Function to pick an image from the gallery
@@ -71,9 +154,7 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
       }
     } catch (e) {
       print('Error fetching location: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error fetching location: $e")),
-      );
+      devtools.log('Error fetching location: $e');
     }
   }
 
@@ -196,6 +277,7 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
               SizedBox(height: screenHeight * 0.03),
               // Enter Title
               TextField(
+                controller: _titleController,
                 decoration: InputDecoration(
                   labelText: 'Enter Title',
                   counterText: "0/50",
@@ -211,23 +293,15 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
               SizedBox(height: screenHeight * 0.02),
               // Select Category
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(
-                  labelText: 'Select Category',
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.green),
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                  ),
-                  labelStyle: GoogleFonts.poppins(
-                      fontSize: screenWidth * 0.04, color: Colors.black),
-                ),
+                value: _selectedCategory,
+                onChanged: (value) => setState(() => _selectedCategory = value),
                 items: ['Vegetable', 'Fruits', 'Seeds', 'Dry Foods']
                     .map((category) => DropdownMenuItem(
                           value: category,
-                          child: Text(category,
-                              style: TextStyle(fontSize: screenWidth * 0.04)),
+                          child: Text(category),
                         ))
                     .toList(),
-                onChanged: (value) {},
+                decoration: InputDecoration(labelText: 'Select Category'),
               ),
               SizedBox(height: screenHeight * 0.02),
               // Quantity and Unit
@@ -236,6 +310,7 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
                   Expanded(
                     flex: 2,
                     child: TextField(
+                      controller: _quantityController,
                       decoration: InputDecoration(
                         labelText: 'Quantity',
                         border: OutlineInputBorder(
@@ -269,6 +344,7 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
               SizedBox(height: screenHeight * 0.02),
               // Enter Description
               TextField(
+                controller: _descriptionController,
                 maxLines: 4,
                 decoration: InputDecoration(
                   labelText: 'Enter Description',
@@ -305,6 +381,7 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
                   Expanded(
                     flex: 2,
                     child: TextField(
+                      controller: _priceController,
                       decoration: InputDecoration(
                         labelText: 'Price Per 1 Kg',
                         border: OutlineInputBorder(
@@ -337,30 +414,53 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
               ),
               SizedBox(height: screenHeight * 0.03),
               // Next Button
-              Center(
-                child: SizedBox(
-                  width: screenWidth * 0.25,
-                  height: screenHeight * 0.06,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Button action here
-                    },
-                    child: Text(
-                      'Next',
-                      style: GoogleFonts.poppins(
-                          fontSize: screenWidth * 0.05,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(80),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: screenWidth * 0.30,
+                    height: screenHeight * 0.055,
+                    child: ElevatedButton(
+                      onPressed: () => _submitProduct(context),
+                      child: Text(
+                        'Submit',
+                        style: GoogleFonts.poppins(
+                            fontSize: screenWidth * 0.045,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(80),
+                        ),
                       ),
                     ),
                   ),
-                ),
+                  Spacer(),
+                  SizedBox(
+                    width: screenWidth * 0.30,
+                    height: screenHeight * 0.055,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      child: Text(
+                        'Preview',
+                        style: GoogleFonts.poppins(
+                            fontSize: screenWidth * 0.045,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(80),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
+
               SizedBox(height: screenHeight * 0.03),
             ],
           ),
