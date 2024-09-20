@@ -51,6 +51,7 @@ dependencies:
   url_launcher: ^6.3.0
   flutter_polyline_points: ^2.1.0
   http: ^1.2.2
+  flutter_pw_validator: ^1.6.0
 
 dev_dependencies:
   flutter_test:

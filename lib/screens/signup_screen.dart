@@ -2,6 +2,7 @@ import 'package:agro_mart/screens/login_screen.dart';
 import 'package:agro_mart/services/auth_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_pw_validator/flutter_pw_validator.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -22,6 +23,10 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _confirmPasswordController =
       TextEditingController(); // For confirm password
 
+  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+
+  bool isSuccess = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,179 +41,231 @@ class _SignupScreenState extends State<SignupScreen> {
                 horizontal: screenWidth * 0.05,
                 vertical: screenHeight * 0.05,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: screenHeight * 0.05),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Welcome!',
-                        style: GoogleFonts.poppins(
-                          fontSize: screenWidth * 0.10,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.black,
+              child: Form(
+                key: _formkey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: screenHeight * 0.05),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Welcome!',
+                          style: GoogleFonts.poppins(
+                            fontSize: screenWidth * 0.10,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.black,
+                          ),
+                        ),
+                        Stack(
+                          children: [
+                            CircleAvatar(
+                              radius: screenWidth * 0.13,
+                              backgroundColor:
+                                  const Color.fromARGB(255, 116, 116, 116),
+                              child: Icon(
+                                Icons.person,
+                                size: screenWidth * 0.13,
+                                color: const Color.fromARGB(255, 255, 255, 255),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: CircleAvatar(
+                                radius: screenWidth * 0.04,
+                                backgroundColor: const Color(0xFF28A745),
+                                child: Icon(
+                                  Icons.add,
+                                  size: screenWidth * 0.07,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    //SizedBox(height: screenHeight * 0.01),
+                    Text(
+                      'Sign up',
+                      style: GoogleFonts.poppins(
+                        fontSize: screenWidth * 0.055,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    SizedBox(height: screenHeight * 0.04),
+                    // Name Field
+                    buildTextField('Name', Icons.person, _nameController,
+                        validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Name is required';
+                      }
+                      return null;
+                    }),
+                    SizedBox(height: screenHeight * 0.02),
+                    // Email Field
+                    buildTextField('Email', Icons.email, _emailController,
+                        validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Email is required';
+                      }
+                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                          .hasMatch(value)) {
+                        return 'Please enter a valid email';
+                      }
+                      return null;
+                    }),
+                    SizedBox(height: screenHeight * 0.02),
+                    // Address Field
+                    buildTextField(
+                        'Address', Icons.location_on, _addressController,
+                        validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Address is required';
+                      }
+                      return null;
+                    }),
+                    SizedBox(height: screenHeight * 0.02),
+                    // Phone Field
+                    buildTextField('Phone No', Icons.phone, _phoneController,
+                        validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Phone number is required';
+                      }
+                      if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
+                        return 'Please enter a valid phone number';
+                      }
+                      return null;
+                    }),
+                    SizedBox(height: screenHeight * 0.02),
+                    // Password Field
+                    buildPasswordField('Password', _passwordController),
+                    SizedBox(height: screenHeight * 0.015),
+                    SizedBox(
+                      height: screenHeight *
+                          0.109, // Reduce the height to remove extra space
+                      child: FlutterPwValidator(
+                        defaultColor: Colors.grey,
+                        uppercaseCharCount: 1,
+                        minLength: 8,
+                        width: screenWidth * 0.9,
+                        height: screenHeight * 0.05, // Decrease height here
+                        onSuccess: () {
+                          setState(() {
+                            isSuccess = true;
+                          });
+                        },
+                        onFail: () {
+                          isSuccess = false;
+                        },
+                        controller: _passwordController,
+                      ),
+                    ),
+
+                    SizedBox(height: screenHeight * 0.02),
+                    // Confirm Password Field
+                    buildPasswordField(
+                        'Confirm password', _confirmPasswordController,
+                        validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Confirm password is required';
+                      }
+                      if (value != _passwordController.text) {
+                        return 'Password does not match';
+                      }
+                      return null;
+                    }),
+                    SizedBox(height: screenHeight * 0.05),
+                    // Sign Up Button
+                    SizedBox(
+                      width: double.infinity,
+                      height: screenHeight * 0.07,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF28A745),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        onPressed: () async {
+                          if (_formkey.currentState!.validate()) {
+                            User? user =
+                                await _auth.registerWithEmailAndPassword(
+                                    _emailController.text,
+                                    _passwordController.text);
+
+                            if (user != null) {
+                              Fluttertoast.showToast(
+                                msg:
+                                    "Account created successfully. Now you can login!",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                backgroundColor: Color(0xFF56dc6e),
+                                textColor: Colors.white,
+                                fontSize: 16.0,
+                              );
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LoginScreen()),
+                              );
+                            } else {
+                              Fluttertoast.showToast(
+                                msg: "Failed to create account",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                backgroundColor:
+                                    Color.fromARGB(255, 238, 118, 102),
+                                textColor: Colors.white,
+                                fontSize: 16.0,
+                              );
+                            }
+                          }
+                        },
+                        child: Text(
+                          'Sign Up',
+                          style: GoogleFonts.poppins(
+                            fontSize: screenWidth * 0.045,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
-                      Stack(
+                    ),
+                    SizedBox(height: screenHeight * 0.03),
+                    Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          CircleAvatar(
-                            radius: screenWidth * 0.13,
-                            backgroundColor:
-                                const Color.fromARGB(255, 116, 116, 116),
-                            child: Icon(
-                              Icons.person,
-                              size: screenWidth * 0.13,
-                              color: const Color.fromARGB(255, 255, 255, 255),
-                            ),
+                          Text(
+                            "Have an account? ",
+                            style: GoogleFonts.poppins(
+                                fontSize: screenWidth * 0.045),
                           ),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: CircleAvatar(
-                              radius: screenWidth * 0.04,
-                              backgroundColor: const Color(0xFF28A745),
-                              child: Icon(
-                                Icons.add,
-                                size: screenWidth * 0.07,
-                                color: Colors.white,
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LoginScreen()),
+                              );
+                            },
+                            child: Text(
+                              "Sign In",
+                              style: GoogleFonts.poppins(
+                                color: Color(0xFF28A745),
+                                fontWeight: FontWeight.bold,
+                                fontSize: screenWidth * 0.045,
                               ),
                             ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                  //SizedBox(height: screenHeight * 0.01),
-                  Text(
-                    'Sign up',
-                    style: GoogleFonts.poppins(
-                      fontSize: screenWidth * 0.055,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[600],
                     ),
-                  ),
-                  SizedBox(height: screenHeight * 0.04),
-                  // Name Field
-                  buildTextField('Name', Icons.person, _nameController),
-                  SizedBox(height: screenHeight * 0.02),
-                  // Email Field
-                  buildTextField('Email', Icons.email, _emailController),
-                  SizedBox(height: screenHeight * 0.02),
-                  // Address Field
-                  buildTextField(
-                      'Address', Icons.location_on, _addressController),
-                  SizedBox(height: screenHeight * 0.02),
-                  // Phone Field
-                  buildTextField('Phone No', Icons.phone, _phoneController),
-                  SizedBox(height: screenHeight * 0.02),
-                  // Password Field
-                  buildPasswordField('Password', _passwordController),
-                  SizedBox(height: screenHeight * 0.02),
-                  // Confirm Password Field
-                  buildPasswordField(
-                      'Confirm password', _confirmPasswordController),
-                  SizedBox(height: screenHeight * 0.05),
-                  // Sign Up Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: screenHeight * 0.07,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF28A745),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      onPressed: () async {
-                        String password = _passwordController.text;
-                        String confirmPassword =
-                            _confirmPasswordController.text;
-
-                        if (password != confirmPassword) {
-                          Fluttertoast.showToast(
-                            msg: "Passwords do not match",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM,
-                            backgroundColor: Color.fromARGB(255, 238, 118, 102),
-                            textColor: Colors.white,
-                            fontSize: 16.0,
-                          );
-                          return;
-                        }
-
-                        User? user = await _auth.registerWithEmailAndPassword(
-                          _emailController.text,
-                          password,
-                        );
-
-                        if (user != null) {
-                          Fluttertoast.showToast(
-                            msg:
-                                "Account created successfully. Now you can login!",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM,
-                            backgroundColor: Color(0xFF56dc6e),
-                            textColor: Colors.white,
-                            fontSize: 16.0,
-                          );
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LoginScreen()),
-                          );
-                        } else {
-                          Fluttertoast.showToast(
-                            msg: "Failed to create account",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM,
-                            backgroundColor: Color.fromARGB(255, 238, 118, 102),
-                            textColor: Colors.white,
-                            fontSize: 16.0,
-                          );
-                        }
-                      },
-                      child: Text(
-                        'Sign Up',
-                        style: GoogleFonts.poppins(
-                          fontSize: screenWidth * 0.045,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: screenHeight * 0.03),
-                  Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Have an account? ",
-                          style: GoogleFonts.poppins(
-                              fontSize: screenWidth * 0.045),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => LoginScreen()),
-                            );
-                          },
-                          child: Text(
-                            "Sign In",
-                            style: GoogleFonts.poppins(
-                              color: Color(0xFF28A745),
-                              fontWeight: FontWeight.bold,
-                              fontSize: screenWidth * 0.045,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );
@@ -220,8 +277,9 @@ class _SignupScreenState extends State<SignupScreen> {
 
 // Text Field Builder with controller
 Widget buildTextField(
-    String hintText, IconData icon, TextEditingController controller) {
-  return TextField(
+    String hintText, IconData icon, TextEditingController controller,
+    {String? Function(String?)? validator}) {
+  return TextFormField(
     controller: controller, // Use the controller here
     decoration: InputDecoration(
       prefixIcon: Icon(
@@ -248,17 +306,21 @@ Widget buildTextField(
         ),
       ),
     ),
+    validator: validator,
   );
 }
 
 // Password Field Builder with controller
-Widget buildPasswordField(String hintText, TextEditingController controller) {
+Widget buildPasswordField(String hintText, TextEditingController controller,
+    {String? Function(String?)? validator}) {
   bool isObscure = true;
+
   return StatefulBuilder(
     builder: (context, setState) {
-      return TextField(
-        controller: controller, // Use the controller here
-        obscureText: isObscure,
+      return TextFormField(
+        // Use TextFormField instead of TextField
+        controller: controller,
+        obscureText: isObscure, // Toggle password visibility
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.lock, color: Color(0xFF28A745)),
           suffixIcon: IconButton(
@@ -268,14 +330,13 @@ Widget buildPasswordField(String hintText, TextEditingController controller) {
             ),
             onPressed: () {
               setState(() {
-                isObscure = !isObscure;
+                isObscure = !isObscure; // Toggle the obscure text state
               });
             },
           ),
           hintText: hintText,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            //borderSide: BorderSide(color: Colors.grey, width: 1.5),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
@@ -292,6 +353,7 @@ Widget buildPasswordField(String hintText, TextEditingController controller) {
             ),
           ),
         ),
+        validator: validator, // Validation logic
       );
     },
   );
