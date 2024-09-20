@@ -1,4 +1,5 @@
 import 'package:agro_mart/screens/login_screen.dart';
+import 'package:agro_mart/screens/transpoter/DeliveryMapScreen.dart';
 import 'package:agro_mart/screens/transpoter/TranspoterHome.dart';
 import 'package:agro_mart/screens/transpoter/TranspoterMap.dart';
 import 'package:agro_mart/screens/transpoter/TranspoterOrders.dart';
@@ -19,7 +20,7 @@ class _TransporterScreenState extends State<TransporterScreen> {
   final List<Widget> _pages = [
     TranspoterHome(),
     TranspoterOrder(),
-    TranspoterMap(),
+    DeliveryMapScreen(),
     TranspoterProfile(),
   ];
 

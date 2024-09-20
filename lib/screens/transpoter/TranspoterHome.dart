@@ -1,3 +1,4 @@
+import 'package:agro_mart/screens/transpoter/DeliveryMapScreen.dart';
 import 'package:agro_mart/services/location_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -221,7 +222,12 @@ class _TranspoterHomeState extends State<TranspoterHome> {
                       child: SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DeliveryMapScreen()));
+                          },
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 40, vertical: 12),

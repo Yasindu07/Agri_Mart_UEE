@@ -5,6 +5,8 @@ package="com.example.agro_mart">
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
     <application
         android:label="agro_mart"
         android:name="${applicationName}"
@@ -38,7 +40,7 @@ package="com.example.agro_mart">
             android:name="flutterEmbedding"
             android:value="2" />
         <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAZS4bGNd6jkV6mUHzmN1jDySSyROPxubY" />
+            android:value="AIzaSyClmOljs5wfE6KmOauX_vC_dBdq06A8rpk" />
 
     </application>
     <!-- Required to query activities that can process text, see:
@@ -50,6 +52,10 @@ package="com.example.agro_mart">
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="tel" />
         </intent>
     </queries>
 </manifest>
