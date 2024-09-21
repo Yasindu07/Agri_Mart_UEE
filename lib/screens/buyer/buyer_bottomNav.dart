@@ -30,7 +30,7 @@ class _BuyerBottomNavState extends State<BuyerBottomNav> {
       title: Text("Cart"),
     ),
     SalomonBottomBarItem(
-      icon: Icon(Icons.comment),
+      icon: Icon(Icons.comment_rounded),
       title: Text("Community"),
     ),
     SalomonBottomBarItem(
