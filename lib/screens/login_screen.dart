@@ -1,3 +1,4 @@
+import 'package:agro_mart/forgot_password/forget_pw_email.dart';
 import 'package:agro_mart/screens/signup_screen.dart';
 import 'package:agro_mart/services/auth_services.dart';
 import 'package:agro_mart/widgets/auth_wrapper.dart';
@@ -102,12 +103,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      // Navigate to the forget password screen
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ForgetEmailscreen()));
+                    },
                     child: Text(
                       'Forget Password?',
                       style: GoogleFonts.poppins(
-                        color: Colors.grey,
-                        fontSize: screenWidth * 0.05, // Responsive font size
+                        color: const Color(0xFF2C87FF),
+                        fontSize: screenWidth * 0.04, // Responsive font size
                       ),
                     ),
                   ),
@@ -209,6 +216,8 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+
+class ForgetEmailScreen {}
 
 // Password Field with Validation
 Widget buildPasswordField(String hintText, TextEditingController controller,
