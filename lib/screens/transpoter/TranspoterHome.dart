@@ -68,11 +68,12 @@ class _TranspoterHomeState extends State<TranspoterHome> {
             // Location Text
             Text(
               "Your Location",
-              style: GoogleFonts.poppins(fontSize: 12),
+              style: GoogleFonts.poppins(fontSize: 14),
             ),
             Row(
               children: [
-                const Icon(Icons.location_on, color: Colors.green),
+                Icon(Icons.location_on,
+                    color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Expanded(
                   child: _currentAddress != null
@@ -82,7 +83,7 @@ class _TranspoterHomeState extends State<TranspoterHome> {
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                           ),
-                          maxLines: 1,
+                          maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                         )
                       : const Text("Loading location..."),
@@ -119,6 +120,7 @@ class _TranspoterHomeState extends State<TranspoterHome> {
                               style: GoogleFonts.poppins(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
+                                color: Colors.black,
                               ),
                             ),
                           ],
@@ -152,6 +154,7 @@ class _TranspoterHomeState extends State<TranspoterHome> {
                               style: GoogleFonts.poppins(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
+                                color: Colors.black,
                               ),
                             ),
                           ],
@@ -171,6 +174,7 @@ class _TranspoterHomeState extends State<TranspoterHome> {
                               style: GoogleFonts.poppins(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
+                                color: Colors.black,
                               ),
                             ),
                           ],
@@ -196,6 +200,7 @@ class _TranspoterHomeState extends State<TranspoterHome> {
                               style: GoogleFonts.poppins(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
+                                color: Colors.black,
                               ),
                             ),
                           ],
@@ -215,6 +220,7 @@ class _TranspoterHomeState extends State<TranspoterHome> {
                               style: GoogleFonts.poppins(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
+                                color: Colors.black,
                               ),
                             ),
                           ],

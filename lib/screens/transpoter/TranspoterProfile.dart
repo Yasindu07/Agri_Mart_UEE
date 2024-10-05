@@ -54,6 +54,7 @@ class _TranspoterProfileState extends State<TranspoterProfile> {
               style: GoogleFonts.poppins(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
+                color: Colors.black,
               ),
             ),
             Text(

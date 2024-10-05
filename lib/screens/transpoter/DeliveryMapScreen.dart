@@ -1,4 +1,5 @@
 import 'package:agro_mart/screens/transporter_screen.dart';
+import 'package:agro_mart/screens/transpoter/OrderCompleteScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -29,6 +30,8 @@ class _DeliveryMapScreenState extends State<DeliveryMapScreen> {
   Set<Circle> _circles = {};
   List<LatLng> polylineCoordinates = [];
   bool _deliveryStarted = false;
+  bool _isOrderGetFromFarmer = false;
+  bool _isArrivedAtBuyer = false;
 
   @override
   void initState() {
@@ -208,50 +211,176 @@ class _DeliveryMapScreenState extends State<DeliveryMapScreen> {
           ),
           SizedBox(height: 16),
           // Farmer and Buyer Details
-          _buildContactCard(
-            label: "Farmer",
-            name: "Sachith Nimendra",
-            phone: "tel:+123456789",
-            imageUrl: "https://via.placeholder.com/50",
-            backgroundColor: Theme.of(context).colorScheme.secondary,
-          ),
-          _buildContactCard(
-            label: "Buyer",
-            name: "Inupa Udara",
-            phone: "tel:+987654321",
-            imageUrl: "https://via.placeholder.com/50",
-            backgroundColor: Theme.of(context).colorScheme.secondary,
-          ),
+          !_deliveryStarted && !_isOrderGetFromFarmer
+              ? Column(
+                  children: [
+                    _buildContactCard(
+                      label: "Farmer",
+                      name: "Sachith Nimendra",
+                      phone: "tel:+123456789",
+                      imageUrl: "https://via.placeholder.com/50",
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                    ),
+                    _buildContactCard(
+                      label: "Buyer",
+                      name: "Inupa Udara",
+                      phone: "tel:+987654321",
+                      imageUrl: "https://via.placeholder.com/50",
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _deliveryStarted = true;
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 16.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                        ),
+                        child: Text("Start",
+                            style: GoogleFonts.poppins(
+                                fontSize: 18, color: Colors.white)),
+                      ),
+                    ),
+                  ],
+                )
+              : _deliveryStarted && !_isOrderGetFromFarmer
+                  ? Column(
+                      children: [
+                        _buildContactCard(
+                          label: "Farmer",
+                          name: "Sachith Nimendra",
+                          phone: "tel:+123456789",
+                          imageUrl: "https://via.placeholder.com/50",
+                          backgroundColor:
+                              Theme.of(context).colorScheme.secondary,
+                        ),
+                        SizedBox(
+                          height: 12,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Picked up from farmer?",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.poppins(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black),
+                            ),
+                            SizedBox(
+                              // width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _isOrderGetFromFarmer = true;
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.primary,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 16, right: 16),
+                                  child: Text("Confirm",
+                                      style: GoogleFonts.poppins(
+                                          fontSize: 18, color: Colors.white)),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
+                  : _deliveryStarted && _isOrderGetFromFarmer
+                      ? Column(
+                          children: [
+                            _buildContactCard(
+                              label: "Buyer",
+                              name: "Inupa Udara",
+                              phone: "tel:+987654321",
+                              imageUrl: "https://via.placeholder.com/50",
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.secondary,
+                            ),
+                            SizedBox(
+                              height: 12,
+                            ),
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: Text(
+                                      "Arrived at buyer and picked money?", // Long text
+                                      textAlign: TextAlign
+                                          .left, // Align the text to the left
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                SizedBox(
+                                  // width: double.infinity,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _isOrderGetFromFarmer = true;
+                                        _isArrivedAtBuyer = true;
+                                        Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    OrderCompletescreen()));
+                                      });
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 16.0),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20.0),
+                                      ),
+                                      backgroundColor:
+                                          Theme.of(context).colorScheme.primary,
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 16, right: 16),
+                                      child: Text("Confirm",
+                                          style: GoogleFonts.poppins(
+                                              fontSize: 18,
+                                              color: Colors.white)),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
+                      : SizedBox.shrink(),
           SizedBox(height: 16),
           // Start/Confirm Button
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _deliveryStarted = !_deliveryStarted;
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 16.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                backgroundColor: _deliveryStarted
-                    ? Colors.green
-                    : Theme.of(context).colorScheme.primary,
-              ),
-              child: Text(_deliveryStarted ? "Confirm" : "Start",
-                  style:
-                      GoogleFonts.poppins(fontSize: 18, color: Colors.white)),
-            ),
-          ),
-          if (_deliveryStarted)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child:
-                  Text("Picked up from farmer?", textAlign: TextAlign.center),
-            ),
+
+          // if (_deliveryStarted)
         ],
       ),
     );
@@ -281,7 +410,10 @@ class _DeliveryMapScreenState extends State<DeliveryMapScreen> {
                 Text(label, style: GoogleFonts.poppins(color: Colors.black54)),
                 SizedBox(height: 4),
                 Text(name,
-                    style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    )),
               ],
             ),
             Spacer(),
