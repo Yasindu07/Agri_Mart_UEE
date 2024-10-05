@@ -1,3 +1,5 @@
+import 'package:agro_mart/screens/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'add_location_page.dart'; // Import the Add Location page
 
@@ -12,11 +14,14 @@ class ProfilePage extends StatelessWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.settings),
-            onPressed: () {
-              // Handle settings action
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              // Add logout functionality
+              await FirebaseAuth.instance.signOut();
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()));
             },
-          ),
+          )
         ],
       ),
       body: Padding(

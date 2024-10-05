@@ -1,3 +1,4 @@
+import 'package:agro_mart/forgot_password/forget_pw_email.dart';
 import 'package:agro_mart/screens/signup_screen.dart';
 import 'package:agro_mart/services/auth_services.dart';
 import 'package:agro_mart/widgets/auth_wrapper.dart';
@@ -19,6 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
 
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+
+  bool isLoading = false;
 
   // Email Validator
   String? _emailValidator(String? value) {
@@ -83,7 +86,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextFormField(
                   controller: _emailController,
                   decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.email, color: Colors.green),
+                    prefixIcon: Icon(Icons.email,
+                        color: Theme.of(context).colorScheme.primary),
                     labelText: 'Email',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -102,12 +106,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      // Navigate to the forget password screen
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ForgetEmailscreen()));
+                    },
                     child: Text(
                       'Forget Password?',
                       style: GoogleFonts.poppins(
-                        color: Colors.grey,
-                        fontSize: screenWidth * 0.05, // Responsive font size
+                        color: const Color(0xFF2C87FF),
+                        fontSize: screenWidth * 0.04, // Responsive font size
                       ),
                     ),
                   ),
@@ -121,17 +131,24 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: () async {
                       // Validate the form before proceeding
                       if (_formkey.currentState!.validate()) {
+                        setState(() {
+                          isLoading = true;
+                        });
                         User? user = await _auth.signInWithEmailAndPassword(
                           _emailController.text,
                           _passwordController.text,
                         );
+                        setState(() {
+                          isLoading = false;
+                        });
                         if (user != null) {
                           Fluttertoast.showToast(
                             msg: "Logged In Successfully",
                             toastLength: Toast.LENGTH_SHORT,
                             gravity: ToastGravity.BOTTOM,
-                            backgroundColor: Color(0xFF56dc6e),
-                            textColor: Colors.white,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.onPrimary,
+                            textColor: Theme.of(context).colorScheme.surface,
                             fontSize: 16,
                           );
                           // Navigate to the home screen
@@ -145,26 +162,49 @@ class _LoginScreenState extends State<LoginScreen> {
                             msg: "Invalid Email or Password",
                             toastLength: Toast.LENGTH_SHORT,
                             gravity: ToastGravity.BOTTOM,
-                            backgroundColor: Color.fromARGB(255, 238, 118, 102),
-                            textColor: Colors.white,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.onSecondary,
+                            textColor: Theme.of(context).colorScheme.surface,
                             fontSize: 16,
                           );
                         }
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF28A745), // Custom green color
+                      backgroundColor: Theme.of(context)
+                          .colorScheme
+                          .primary, // Custom green color
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: Text(
-                      'Sign In',
-                      style: GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontSize: screenWidth * 0.05, // Responsive font size
-                      ),
-                    ),
+                    child: isLoading
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Loading...',
+                                style: GoogleFonts.poppins(
+                                  fontSize: screenWidth * 0.05,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              SizedBox(width: screenWidth * 0.03),
+                              CircularProgressIndicator(
+                                color: Theme.of(context).colorScheme.secondary,
+                                strokeWidth: screenWidth * 0.013,
+                              ),
+                            ],
+                          )
+                        : Text(
+                            'Sign In',
+                            style: GoogleFonts.poppins(
+                              fontSize: screenWidth * 0.05,
+                              color: Theme.of(context).colorScheme.surface,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.03),
@@ -191,7 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Text(
                           'Sign Up',
                           style: GoogleFonts.poppins(
-                            color: Color(0xFF28A745),
+                            color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.bold,
                             fontSize:
                                 screenWidth * 0.045, // Responsive font size
@@ -209,6 +249,8 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+
+class ForgetEmailScreen {}
 
 // Password Field with Validation
 Widget buildPasswordField(String hintText, TextEditingController controller,

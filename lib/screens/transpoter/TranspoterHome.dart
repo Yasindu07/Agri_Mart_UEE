@@ -1,3 +1,4 @@
+import 'package:agro_mart/screens/transpoter/success_screen.dart';
 import 'package:agro_mart/screens/transpoter/DeliveryMapScreen.dart';
 import 'package:agro_mart/services/location_service.dart';
 import 'package:flutter/material.dart';
@@ -65,10 +66,14 @@ class _TranspoterHomeState extends State<TranspoterHome> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Location Text
-            const Text("Your Location"),
+            Text(
+              "Your Location",
+              style: GoogleFonts.poppins(fontSize: 14),
+            ),
             Row(
               children: [
-                const Icon(Icons.location_on, color: Colors.green),
+                Icon(Icons.location_on,
+                    color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Expanded(
                   child: _currentAddress != null
@@ -78,7 +83,7 @@ class _TranspoterHomeState extends State<TranspoterHome> {
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                           ),
-                          maxLines: 1,
+                          maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                         )
                       : const Text("Loading location..."),
@@ -115,6 +120,7 @@ class _TranspoterHomeState extends State<TranspoterHome> {
                               style: GoogleFonts.poppins(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
+                                color: Colors.black,
                               ),
                             ),
                           ],
@@ -148,6 +154,7 @@ class _TranspoterHomeState extends State<TranspoterHome> {
                               style: GoogleFonts.poppins(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
+                                color: Colors.black,
                               ),
                             ),
                           ],
@@ -167,6 +174,7 @@ class _TranspoterHomeState extends State<TranspoterHome> {
                               style: GoogleFonts.poppins(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
+                                color: Colors.black,
                               ),
                             ),
                           ],
@@ -192,6 +200,7 @@ class _TranspoterHomeState extends State<TranspoterHome> {
                               style: GoogleFonts.poppins(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
+                                color: Colors.black,
                               ),
                             ),
                           ],
@@ -211,6 +220,7 @@ class _TranspoterHomeState extends State<TranspoterHome> {
                               style: GoogleFonts.poppins(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
+                                color: Colors.black,
                               ),
                             ),
                           ],
@@ -226,7 +236,7 @@ class _TranspoterHomeState extends State<TranspoterHome> {
                             Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => DeliveryMapScreen()));
+                                    builder: (context) => SuccessScreen()));
                           },
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(

@@ -34,14 +34,14 @@ class ProductService {
 
   // Read a List of Products for the current user
   Stream<List<Product>> getUserProducts() {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) {
       throw Exception('User not logged in');
     }
 
     return _firestore
         .collection('products')
-        .where('userId', isEqualTo: user.uid)
+        .where('userId', isEqualTo: userId)
         .snapshots()
         .map((snapshot) {
       return snapshot.docs.map((doc) {

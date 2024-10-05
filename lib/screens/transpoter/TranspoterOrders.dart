@@ -53,6 +53,7 @@ class TranspoterOrder extends StatelessWidget {
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
+                            color: Colors.black,
                           ),
                         ),
                         // Order Status (Completed)
@@ -84,13 +85,14 @@ class TranspoterOrder extends StatelessWidget {
                             Row(
                               children: [
                                 const Icon(Icons.circle,
-                                    size: 10, color: Colors.green),
+                                    size: 10, color: Color(0xFF28A745)),
                                 const SizedBox(width: 4),
                                 Text(
                                   "Matara",
                                   style: GoogleFonts.poppins(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
+                                    color: Colors.black,
                                   ),
                                 ),
                               ],
@@ -99,13 +101,14 @@ class TranspoterOrder extends StatelessWidget {
                             Row(
                               children: [
                                 const Icon(Icons.circle,
-                                    size: 10, color: Colors.green),
+                                    size: 10, color: Color(0xFF28A745)),
                                 const SizedBox(width: 4),
                                 Text(
                                   "Galle",
                                   style: GoogleFonts.poppins(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
+                                    color: Colors.black,
                                   ),
                                 ),
                               ],

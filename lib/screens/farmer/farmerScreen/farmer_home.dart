@@ -27,21 +27,21 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
         child: Column(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment
-                  .spaceBetween, // Distributes space between children
               children: [
+                Spacer(),
                 Expanded(
+                  flex: 2,
                   child: Text(
                     'Product List',
-                    textAlign: TextAlign
-                        .center, // Center text within the Expanded widget
+                    textAlign: TextAlign.center,
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
-                      fontSize: screenWidth * 0.06, // Responsive font size
+                      fontSize: screenWidth * 0.06,
                     ),
                   ),
                 ),
+                Spacer(),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -53,22 +53,24 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
                       ),
                     );
                   },
-                  child: CircleAvatar(
-                    backgroundColor: Colors.green,
-                    child: Icon(Icons.add, color: Colors.white),
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 8.0),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.green,
+                      child: Icon(Icons.add, color: Colors.white),
+                    ),
                   ),
                 ),
               ],
             ),
 
-            // Categories Row
             Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: screenWidth * 0.04,
                 vertical: screenHeight * 0.015,
               ),
               child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal, // Enable horizontal scrolling
+                scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
                     _buildCategoryCard(
