@@ -1,4 +1,6 @@
+import 'package:agro_mart/screens/transporter_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -135,7 +137,10 @@ class _DeliveryMapScreenState extends State<DeliveryMapScreen> {
             child: IconButton(
               icon: Icon(Icons.arrow_back, color: Colors.black),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => TransporterScreen()));
               },
             ),
           ),
@@ -179,20 +184,23 @@ class _DeliveryMapScreenState extends State<DeliveryMapScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Package Information",
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                           fontWeight: FontWeight.bold, color: Colors.black)),
                   SizedBox(height: 4),
                   Row(
                     children: [
-                      Text("Package: Rice"),
+                      Text(
+                        "Package: Rice",
+                        style: GoogleFonts.poppins(),
+                      ),
                       SizedBox(width: 16),
-                      Text("Quantity: 50 kg"),
+                      Text("Quantity: 50 kg", style: GoogleFonts.poppins()),
                     ],
                   ),
                 ],
               ),
               Text("Rs. 5000",
-                  style: TextStyle(
+                  style: GoogleFonts.poppins(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                       color: Colors.black)),
@@ -234,7 +242,8 @@ class _DeliveryMapScreenState extends State<DeliveryMapScreen> {
                     : Theme.of(context).colorScheme.primary,
               ),
               child: Text(_deliveryStarted ? "Confirm" : "Start",
-                  style: TextStyle(fontSize: 18, color: Colors.white)),
+                  style:
+                      GoogleFonts.poppins(fontSize: 18, color: Colors.white)),
             ),
           ),
           if (_deliveryStarted)
@@ -269,14 +278,16 @@ class _DeliveryMapScreenState extends State<DeliveryMapScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: TextStyle(color: Colors.black54)),
+                Text(label, style: GoogleFonts.poppins(color: Colors.black54)),
                 SizedBox(height: 4),
-                Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(name,
+                    style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
               ],
             ),
             Spacer(),
             IconButton(
-              icon: Icon(Icons.call, color: Colors.green),
+              icon: Icon(Icons.call,
+                  color: Theme.of(context).colorScheme.primary),
               onPressed: () => _launchURL(phone),
             ),
           ],

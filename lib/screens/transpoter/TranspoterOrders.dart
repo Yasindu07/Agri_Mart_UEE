@@ -84,7 +84,7 @@ class TranspoterOrder extends StatelessWidget {
                             Row(
                               children: [
                                 const Icon(Icons.circle,
-                                    size: 10, color: Colors.green),
+                                    size: 10, color: Color(0xFF28A745)),
                                 const SizedBox(width: 4),
                                 Text(
                                   "Matara",
@@ -99,7 +99,7 @@ class TranspoterOrder extends StatelessWidget {
                             Row(
                               children: [
                                 const Icon(Icons.circle,
-                                    size: 10, color: Colors.green),
+                                    size: 10, color: Color(0xFF28A745)),
                                 const SizedBox(width: 4),
                                 Text(
                                   "Galle",

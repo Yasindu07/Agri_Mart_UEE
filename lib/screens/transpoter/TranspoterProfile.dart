@@ -84,7 +84,8 @@ class _TranspoterProfileState extends State<TranspoterProfile> {
               initialValue: "Password",
               obscureText: !isPasswordVisible,
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.lock, color: Colors.green),
+                prefixIcon: Icon(Icons.lock,
+                    color: Theme.of(context).colorScheme.primary),
                 suffixIcon: IconButton(
                   icon: Icon(
                     isPasswordVisible ? Icons.visibility : Icons.visibility_off,
@@ -127,7 +128,7 @@ class _TranspoterProfileState extends State<TranspoterProfile> {
               child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -187,9 +188,10 @@ Widget buildTextField({
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 10),
     child: TextFormField(
+      style: GoogleFonts.poppins(),
       initialValue: initialValue,
       decoration: InputDecoration(
-        prefixIcon: Icon(icon, color: Colors.green),
+        prefixIcon: Icon(icon, color: Color(0xFF28A745)),
         filled: true,
         fillColor: Colors.white,
         hintText: hintText,

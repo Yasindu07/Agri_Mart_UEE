@@ -215,7 +215,8 @@ class _TransporterFormPageState extends State<TransporterFormPage> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          backgroundColor: Colors.green,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
                         ),
                         child: _isLoading
                             ? CircularProgressIndicator(
@@ -253,7 +254,7 @@ class _TransporterFormPageState extends State<TransporterFormPage> {
       child: TextFormField(
         controller: controller,
         decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: Colors.green),
+          prefixIcon: Icon(icon, color: Theme.of(context).colorScheme.primary),
           labelText: label,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
@@ -283,11 +284,13 @@ class _TransporterFormPageState extends State<TransporterFormPage> {
                 child: Text(label),
               ),
               IconButton(
-                icon: Icon(Icons.camera_alt, color: Colors.green),
+                icon: Icon(Icons.camera_alt,
+                    color: Theme.of(context).colorScheme.primary),
                 onPressed: () => _pickImage(ImageSource.camera, isLicenseImage),
               ),
               IconButton(
-                icon: Icon(Icons.image, color: Colors.green),
+                icon: Icon(Icons.image,
+                    color: Theme.of(context).colorScheme.primary),
                 onPressed: () =>
                     _pickImage(ImageSource.gallery, isLicenseImage),
               ),
