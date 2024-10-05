@@ -26,6 +26,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
   bool isSuccess = false;
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +68,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               child: Icon(
                                 Icons.person,
                                 size: screenWidth * 0.13,
-                                color: const Color.fromARGB(255, 255, 255, 255),
+                                color: Theme.of(context).colorScheme.surface,
                               ),
                             ),
                             Positioned(
@@ -75,11 +76,12 @@ class _SignupScreenState extends State<SignupScreen> {
                               right: 0,
                               child: CircleAvatar(
                                 radius: screenWidth * 0.04,
-                                backgroundColor: const Color(0xFF28A745),
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary,
                                 child: Icon(
                                   Icons.add,
                                   size: screenWidth * 0.07,
-                                  color: Colors.white,
+                                  color: Theme.of(context).colorScheme.surface,
                                 ),
                               ),
                             ),
@@ -182,20 +184,28 @@ class _SignupScreenState extends State<SignupScreen> {
                     // Sign Up Button
                     SizedBox(
                       width: double.infinity,
-                      height: screenHeight * 0.07,
+                      height: screenHeight * 0.072,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF28A745),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                         onPressed: () async {
                           if (_formkey.currentState!.validate()) {
+                            setState(() {
+                              isLoading = true;
+                            });
                             User? user =
                                 await _auth.registerWithEmailAndPassword(
                                     _emailController.text,
                                     _passwordController.text);
+
+                            setState(() {
+                              isLoading = false;
+                            });
 
                             if (user != null) {
                               Fluttertoast.showToast(
@@ -203,8 +213,10 @@ class _SignupScreenState extends State<SignupScreen> {
                                     "Account created successfully. Now you can login!",
                                 toastLength: Toast.LENGTH_SHORT,
                                 gravity: ToastGravity.BOTTOM,
-                                backgroundColor: Color(0xFF56dc6e),
-                                textColor: Colors.white,
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.onPrimary,
+                                textColor:
+                                    Theme.of(context).colorScheme.surface,
                                 fontSize: 16.0,
                               );
                               Navigator.pushReplacement(
@@ -218,20 +230,42 @@ class _SignupScreenState extends State<SignupScreen> {
                                 toastLength: Toast.LENGTH_SHORT,
                                 gravity: ToastGravity.BOTTOM,
                                 backgroundColor:
-                                    Color.fromARGB(255, 238, 118, 102),
-                                textColor: Colors.white,
+                                    Theme.of(context).colorScheme.onSecondary,
+                                textColor:
+                                    Theme.of(context).colorScheme.surface,
                                 fontSize: 16.0,
                               );
                             }
                           }
                         },
-                        child: Text(
-                          'Sign Up',
-                          style: GoogleFonts.poppins(
-                            fontSize: screenWidth * 0.045,
-                            color: Colors.white,
-                          ),
-                        ),
+                        child: isLoading
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Loading...',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: screenWidth * 0.05,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  SizedBox(width: screenWidth * 0.03),
+                                  CircularProgressIndicator(
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                    strokeWidth: screenWidth * 0.013,
+                                  ),
+                                ],
+                              )
+                            : Text(
+                                'Sign Up',
+                                style: GoogleFonts.poppins(
+                                  fontSize: screenWidth * 0.05,
+                                  color: Theme.of(context).colorScheme.surface,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                       ),
                     ),
                     SizedBox(height: screenHeight * 0.03),
@@ -255,7 +289,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             child: Text(
                               "Sign In",
                               style: GoogleFonts.poppins(
-                                color: Color(0xFF28A745),
+                                color: Theme.of(context).colorScheme.primary,
                                 fontWeight: FontWeight.bold,
                                 fontSize: screenWidth * 0.045,
                               ),

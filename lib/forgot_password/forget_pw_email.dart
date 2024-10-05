@@ -15,6 +15,8 @@ class ForgetEmailscreen extends StatefulWidget {
 class _ForgetEmailscreenState extends State<ForgetEmailscreen> {
   final _emailController = TextEditingController();
 
+  bool isLoading = false; // Loading state
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -30,6 +32,10 @@ class _ForgetEmailscreenState extends State<ForgetEmailscreen> {
 
   // Reset password
   Future passwordReset() async {
+    setState(() {
+      isLoading = true; // Start loading
+    });
+
     String email = _emailController.text.trim();
 
     // Check if email format is valid
@@ -38,10 +44,13 @@ class _ForgetEmailscreenState extends State<ForgetEmailscreen> {
         msg: "Invalid email format. Please re-enter a valid email.",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
+        backgroundColor: Theme.of(context).colorScheme.onSecondary,
         textColor: Colors.white,
         fontSize: 16.0,
       );
+      setState(() {
+        isLoading = false; // Stop loading
+      });
       return;
     }
 
@@ -58,7 +67,7 @@ class _ForgetEmailscreenState extends State<ForgetEmailscreen> {
           msg: "No user found with this email. Please recheck and try again.",
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.red,
+          backgroundColor: Theme.of(context).colorScheme.onSecondary,
           textColor: Colors.white,
           fontSize: 16.0,
         );
@@ -70,20 +79,33 @@ class _ForgetEmailscreenState extends State<ForgetEmailscreen> {
           msg: "Check your email and Reset Password.",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.green,
+          backgroundColor: Theme.of(context).colorScheme.onPrimary,
           textColor: Colors.white,
           fontSize: 16.0,
         );
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => VarifyMail(
-                      email: email,
-                    )));
+          context,
+          MaterialPageRoute(
+            builder: (context) => VarifyMail(email: email),
+          ),
+        );
       }
     } catch (e) {
-      // Print error to see what went wrong
+      // Handle errors
+      Fluttertoast.showToast(
+        msg: "Something went wrong. Please try again later.",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Theme.of(context).colorScheme.onSecondary,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
       print('Error: $e');
+    } finally {
+      // Stop loading in both success and error cases
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -155,14 +177,33 @@ class _ForgetEmailscreenState extends State<ForgetEmailscreen> {
                     borderRadius: BorderRadius.circular(15),
                   ),
                 ),
-                child: Text(
-                  'Send',
-                  style: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: screenWidth * 0.05,
-                  ),
-                ),
+                child: isLoading
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Loading...',
+                            style: GoogleFonts.poppins(
+                              fontSize: screenWidth * 0.05,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          SizedBox(width: screenWidth * 0.03),
+                          CircularProgressIndicator(
+                            color: Theme.of(context).colorScheme.secondary,
+                            strokeWidth: screenWidth * 0.013,
+                          ),
+                        ],
+                      )
+                    : Text(
+                        'Send Reset Link',
+                        style: GoogleFonts.poppins(
+                          fontSize: screenWidth * 0.05,
+                          color: Theme.of(context).colorScheme.surface,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
               ),
             ),
           ],

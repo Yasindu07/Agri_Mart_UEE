@@ -1,10 +1,12 @@
 import 'package:agro_mart/model/product_model.dart';
 import 'package:agro_mart/screens/farmer/farmerScreen/farmer_home.dart';
+import 'package:agro_mart/screens/farmer/farmerScreen/farmer_product_preview.dart';
 import 'package:agro_mart/services/location_service.dart';
 import 'package:agro_mart/services/product_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:io';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -32,15 +34,41 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
 
+  int _titleLength = 0;
+  int _descLength = 0;
+
+  bool isLoading = false;
+
   String? _selectedCategory;
 
   @override
   void initState() {
     super.initState();
     _setCurrentLocation();
+    _titleController.addListener(() {
+      setState(() {
+        _titleLength = _titleController.text.length;
+      });
+    });
+    _descriptionController.addListener(() {
+      setState(() {
+        _descLength = _descriptionController.text.length;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _titleController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
   }
 
   Future<void> _submitProduct(BuildContext context) async {
+    setState(() {
+      isLoading = true;
+    });
     try {
       // First, upload images to Firebase Storage and get the URLs
       List<String> imageUrls = await _uploadImages();
@@ -69,6 +97,15 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
 
       devtools.log('Product added successfully with ID: ${product.id}');
 
+      Fluttertoast.showToast(
+        msg: "Product added successfully",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => FarmerHomePage()));
 
@@ -82,6 +119,18 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
       });
     } catch (e) {
       devtools.log('Error adding product: $e');
+      Fluttertoast.showToast(
+        msg: "Something went wrong. Please try again later.",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Theme.of(context).colorScheme.onSecondary,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -181,7 +230,7 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
               'step 1/2',
               style: GoogleFonts.poppins(
                 fontSize: screenWidth * 0.04,
-                color: Colors.green,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
           ],
@@ -278,17 +327,21 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
               // Enter Title
               TextField(
                 controller: _titleController,
+                maxLength: 50,
                 decoration: InputDecoration(
                   labelText: 'Enter Title',
-                  counterText: "0/50",
                   border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.green),
+                    borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.primary),
                     borderRadius: BorderRadius.all(Radius.circular(15)),
                   ),
+                  counterText: '$_titleLength/50',
+                  counterStyle: GoogleFonts.poppins(
+                      fontSize: screenWidth * 0.03,
+                      color: Theme.of(context).colorScheme.primary),
                   labelStyle: GoogleFonts.poppins(
                       fontSize: screenWidth * 0.04, color: Colors.black),
                 ),
-                maxLength: 50,
               ),
               SizedBox(height: screenHeight * 0.02),
               // Select Category
@@ -314,7 +367,8 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
                       decoration: InputDecoration(
                         labelText: 'Quantity',
                         border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.green),
+                          borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.primary),
                           borderRadius: BorderRadius.all(Radius.circular(15)),
                         ),
                         labelStyle: GoogleFonts.poppins(
@@ -330,7 +384,8 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
                       decoration: InputDecoration(
                         labelText: 'Kg',
                         border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.green),
+                          borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.primary),
                           borderRadius: BorderRadius.all(Radius.circular(15)),
                         ),
                         labelStyle: GoogleFonts.poppins(
@@ -345,18 +400,23 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
               // Enter Description
               TextField(
                 controller: _descriptionController,
-                maxLines: 4,
+                maxLength: 200,
+                minLines: 4,
+                maxLines: null,
                 decoration: InputDecoration(
                   labelText: 'Enter Description',
-                  counterText: "0/200",
                   border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.green),
+                    borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.primary),
                     borderRadius: BorderRadius.all(Radius.circular(15)),
                   ),
+                  counterText: '$_descLength/200',
+                  counterStyle: GoogleFonts.poppins(
+                      fontSize: screenWidth * 0.03,
+                      color: Theme.of(context).colorScheme.primary),
                   labelStyle: GoogleFonts.poppins(
                       fontSize: screenWidth * 0.04, color: Colors.black),
                 ),
-                maxLength: 200,
               ),
               SizedBox(height: screenHeight * 0.02),
               // Items Location automatically set from current location
@@ -365,9 +425,11 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
                 decoration: InputDecoration(
                   labelText: 'Items Location',
                   prefixIcon: Icon(Icons.location_on,
-                      size: screenWidth * 0.06, color: Colors.green),
+                      size: screenWidth * 0.06,
+                      color: Theme.of(context).colorScheme.primary),
                   border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.green),
+                    borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.primary),
                     borderRadius: BorderRadius.all(Radius.circular(15)),
                   ),
                   labelStyle: GoogleFonts.poppins(
@@ -385,7 +447,8 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
                       decoration: InputDecoration(
                         labelText: 'Price Per 1 Kg',
                         border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.green),
+                          borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.primary),
                           borderRadius: BorderRadius.all(Radius.circular(15)),
                         ),
                         labelStyle: GoogleFonts.poppins(
@@ -401,7 +464,8 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
                       decoration: InputDecoration(
                         labelText: 'RS',
                         border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.green),
+                          borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.primary),
                           borderRadius: BorderRadius.all(Radius.circular(15)),
                         ),
                         labelStyle: GoogleFonts.poppins(
@@ -418,19 +482,44 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    width: screenWidth * 0.30,
+                    width: screenWidth * 0.40,
                     height: screenHeight * 0.055,
                     child: ElevatedButton(
                       onPressed: () => _submitProduct(context),
-                      child: Text(
-                        'Submit',
-                        style: GoogleFonts.poppins(
-                            fontSize: screenWidth * 0.045,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                      ),
+                      child: isLoading
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'submiting...',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: screenWidth * 0.03,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                SizedBox(width: screenWidth * 0.01),
+                                SizedBox(
+                                  height: screenHeight * 0.03,
+                                  width: screenHeight * 0.03,
+                                  child: CircularProgressIndicator(
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                    strokeWidth: screenWidth * 0.010,
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Text(
+                              'Submit',
+                              style: GoogleFonts.poppins(
+                                fontSize: screenWidth * 0.04,
+                                color: Theme.of(context).colorScheme.surface,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                        backgroundColor: Theme.of(context).colorScheme.primary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(80),
                         ),
@@ -439,19 +528,36 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
                   ),
                   Spacer(),
                   SizedBox(
-                    width: screenWidth * 0.30,
+                    width: screenWidth * 0.40,
                     height: screenHeight * 0.055,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        // Navigate to the preview page with all the data
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProductPreviewPage(
+                              title: _titleController.text,
+                              category: _selectedCategory ?? 'Unknown',
+                              quantity: double.parse(_quantityController.text),
+                              description: _descriptionController.text,
+                              location: _locationController.text,
+                              pricePerKg: double.parse(_priceController.text),
+                              images: _images,
+                            ),
+                          ),
+                        );
+                      },
                       child: Text(
                         'Preview',
                         style: GoogleFonts.poppins(
-                            fontSize: screenWidth * 0.045,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
+                          fontSize: screenWidth * 0.04,
+                          color: Theme.of(context).colorScheme.surface,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                        backgroundColor: Theme.of(context).colorScheme.primary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(80),
                         ),
