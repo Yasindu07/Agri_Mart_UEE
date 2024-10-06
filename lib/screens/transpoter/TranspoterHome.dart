@@ -1,3 +1,4 @@
+import 'package:agro_mart/screens/transporter_screen.dart';
 import 'package:agro_mart/screens/transpoter/success_screen.dart';
 import 'package:agro_mart/screens/transpoter/DeliveryMapScreen.dart';
 import 'package:agro_mart/services/location_service.dart';
@@ -236,7 +237,9 @@ class _TranspoterHomeState extends State<TranspoterHome> {
                             Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => SuccessScreen()));
+                                    builder: (context) => TransporterScreen(
+                                          initialIndex: 2,
+                                        )));
                           },
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(
