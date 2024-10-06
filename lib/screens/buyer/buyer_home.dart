@@ -13,6 +13,21 @@ class _BuyerHomePageState extends State<BuyerHomePage> {
   int _currentCarouselPage = 0;
   int _currentServicesPage = 0;
 
+  // List of your existing images for carousel
+  final List<String> _carouselImages = [
+    'assets/heading1.png',
+    'assets/heading2.png',
+    'assets/heading3.png',
+  ];
+
+  // List of service images
+  final List<String> _serviceImages = [
+    'assets/service1.jpeg',
+    'assets/service2.jpeg',
+    'assets/service3.jpeg',
+    'assets/service4.jpeg',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +64,7 @@ class _BuyerHomePageState extends State<BuyerHomePage> {
                   CircleAvatar(
                     backgroundColor: Colors.grey[400],
                     child: const Icon(Icons.person),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -69,7 +84,8 @@ class _BuyerHomePageState extends State<BuyerHomePage> {
                 children: [
                   PageView.builder(
                     controller: _carouselController,
-                    itemCount: 3, // Number of carousel slides
+                    itemCount:
+                        _carouselImages.length, // Number of carousel slides
                     onPageChanged: (int page) {
                       setState(() {
                         _currentCarouselPage = page;
@@ -80,11 +96,12 @@ class _BuyerHomePageState extends State<BuyerHomePage> {
                         padding: const EdgeInsets.symmetric(horizontal: 40.0),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.grey[300],
                             borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Center(
-                            child: Icon(Icons.image, size: 50),
+                            image: DecorationImage(
+                              image: AssetImage(
+                                  _carouselImages[index]), // Load the image
+                              fit: BoxFit.cover, // Cover the whole container
+                            ),
                           ),
                         ),
                       );
@@ -98,7 +115,7 @@ class _BuyerHomePageState extends State<BuyerHomePage> {
             Center(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(3, (index) {
+                children: List.generate(_carouselImages.length, (index) {
                   return AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
                     margin: const EdgeInsets.symmetric(horizontal: 5),
@@ -135,12 +152,18 @@ class _BuyerHomePageState extends State<BuyerHomePage> {
                 mainAxisSpacing: 10,
                 physics: const NeverScrollableScrollPhysics(),
                 children: List.generate(4, (index) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(10),
+                  return GestureDetector(
+                    onTap: () {
+                      // Handle tap action here
+                      // For example, navigate to another page
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Center(child: Icon(Icons.image, size: 40)),
                     ),
-                    child: const Center(child: Icon(Icons.image, size: 40)),
                   );
                 }),
               ),
@@ -178,11 +201,13 @@ class _BuyerHomePageState extends State<BuyerHomePage> {
                             height: 100,
                             margin: const EdgeInsets.symmetric(horizontal: 5),
                             decoration: BoxDecoration(
-                              color: Colors.grey[300],
                               borderRadius: BorderRadius.circular(10),
+                              image: DecorationImage(
+                                image: AssetImage(_serviceImages[
+                                    i]), // Load the service image
+                                fit: BoxFit.cover, // Cover the container
+                              ),
                             ),
-                            child: const Center(
-                                child: Icon(Icons.image, size: 40)),
                           ),
                         );
                       }),

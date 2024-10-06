@@ -41,7 +41,7 @@ class _BuyerBottomNavState extends State<BuyerBottomNav> {
 
   final _screens = [
     const BuyerHomePage(),
-    const BuyerSearch(),
+    BuyerSearch(),
     CartPage(),
     const CommunityPost(),
     const ProfilePage(),
