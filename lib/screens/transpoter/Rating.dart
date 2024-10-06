@@ -24,13 +24,14 @@ class _RatingScreenState extends State<RatingScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            // Handle back press
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => TransporterScreen()));
           },
         ),
       ),
-      body: Padding(
+      // Ensures that the layout adjusts to the keyboard
+      resizeToAvoidBottomInset: true,
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [

@@ -1,10 +1,9 @@
-import 'package:agro_mart/screens/transporter_screen.dart';
-import 'package:agro_mart/screens/transpoter/success_screen.dart';
-import 'package:agro_mart/screens/transpoter/DeliveryMapScreen.dart';
-import 'package:agro_mart/services/location_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:agro_mart/services/location_service.dart';
+import 'package:agro_mart/screens/transpoter/DeliveryMapScreen.dart';
+import 'package:agro_mart/screens/transporter_screen.dart';
 
 class TranspoterHome extends StatefulWidget {
   const TranspoterHome({super.key});
@@ -48,6 +47,53 @@ class _TranspoterHomeState extends State<TranspoterHome> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Map<String, String>> cardData = [
+      {
+        'name': "Inupa Udara",
+        'package': "Rice",
+        'quantity': "50 kg",
+        'startLocation': "Galle",
+        'destination': "Matara",
+        'price': "Rs. 5000",
+        'imageUrl': 'https://via.placeholder.com/150',
+      },
+      {
+        'name': "Kamal Perera",
+        'package': "Vegetables",
+        'quantity': "30 kg",
+        'startLocation': "Colombo",
+        'destination': "Kandy",
+        'price': "Rs. 3000",
+        'imageUrl': 'https://via.placeholder.com/150',
+      },
+      {
+        'name': "Nimal Fernando",
+        'package': "Fruits",
+        'quantity': "20 kg",
+        'startLocation': "Kurunegala",
+        'destination': "Colombo",
+        'price': "Rs. 2000",
+        'imageUrl': 'https://via.placeholder.com/150',
+      },
+      {
+        'name': "Rohan Silva",
+        'package': "Tea Leaves",
+        'quantity': "40 kg",
+        'startLocation': "Nuwara Eliya",
+        'destination': "Galle",
+        'price': "Rs. 4500",
+        'imageUrl': 'https://via.placeholder.com/150',
+      },
+      {
+        'name': "Sunil Rathnayake",
+        'package': "Coconut",
+        'quantity': "100 pcs",
+        'startLocation': "Anuradhapura",
+        'destination': "Colombo",
+        'price': "Rs. 6000",
+        'imageUrl': 'https://via.placeholder.com/150',
+      },
+    ];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -93,175 +139,219 @@ class _TranspoterHomeState extends State<TranspoterHome> {
             ),
             const SizedBox(height: 16),
 
-            // Card View
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+            // Scrollable list of cards
+            Expanded(
+              child: ListView.builder(
+                itemCount:
+                    cardData.length, // Number of cards you want to display
+                itemBuilder: (context, index) {
+                  final data = cardData[index]; // Fetch the current card data
+                  return ProductCard(
+                    name: data['name']!,
+                    package: data['package']!,
+                    quantity: data['quantity']!,
+                    startLocation: data['startLocation']!,
+                    destination: data['destination']!,
+                    price: data['price']!,
+                    imageUrl: data['imageUrl']!,
+                  );
+                },
               ),
-              color: Theme.of(context).colorScheme.secondary,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Refactored Card Widget
+class ProductCard extends StatelessWidget {
+  final String name;
+  final String package;
+  final String quantity;
+  final String startLocation;
+  final String destination;
+  final String price;
+  final String imageUrl;
+
+  const ProductCard({
+    Key? key,
+    required this.name,
+    required this.package,
+    required this.quantity,
+    required this.startLocation,
+    required this.destination,
+    required this.price,
+    required this.imageUrl,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      color: Theme.of(context).colorScheme.secondary,
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            const CircleAvatar(
-                              radius: 24,
-                              backgroundImage: NetworkImage(
-                                'https://via.placeholder.com/150',
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              "Inupa Udara",
-                              style: GoogleFonts.poppins(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          "Rs. 5000",
-                          style: GoogleFonts.poppins(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
+                    CircleAvatar(
+                      radius: 24,
+                      backgroundImage: NetworkImage(imageUrl),
                     ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Package",
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                            Text(
-                              "Rice",
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Quantity",
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                            Text(
-                              "50 kg",
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Start",
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                            Text(
-                              "Galle",
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Destination",
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                            Text(
-                              "Matara",
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Center(
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => TransporterScreen(
-                                          initialIndex: 2,
-                                        )));
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 40, vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                          ),
-                          child: Text(
-                            "View",
-                            style: GoogleFonts.poppins(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
+                    const SizedBox(width: 12),
+                    Text(
+                      name,
+                      style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
                       ),
                     ),
                   ],
+                ),
+                Text(
+                  price,
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Package",
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    Text(
+                      package,
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Quantity",
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    Text(
+                      quantity,
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Start",
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    Text(
+                      startLocation,
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Destination",
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    Text(
+                      destination,
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Center(
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TransporterScreen(
+                          initialIndex: 2,
+                        ),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  ),
+                  child: Text(
+                    "View",
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
             ),
