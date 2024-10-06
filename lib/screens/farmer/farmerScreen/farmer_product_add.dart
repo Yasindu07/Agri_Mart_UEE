@@ -96,7 +96,7 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
       // Save product to Firestore
       await _productService.addProduct(product);
 
-      devtools.log('Product added successfully with ID: ${product.id}');
+      devtools.log('Product Added successfully with ID: ${product.id}');
 
       Fluttertoast.showToast(
         msg: "Product added successfully",
