@@ -1,6 +1,7 @@
 import 'package:agro_mart/model/product_model.dart';
-import 'package:agro_mart/screens/farmer/farmerScreen/farmer_home.dart';
+//import 'package:agro_mart/screens/farmer/farmerScreen/farmer_home.dart';
 import 'package:agro_mart/screens/farmer/farmerScreen/farmer_product_preview.dart';
+import 'package:agro_mart/screens/farmer/farmer_screen.dart';
 import 'package:agro_mart/services/location_service.dart';
 import 'package:agro_mart/services/product_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -107,7 +108,9 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
       );
 
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => FarmerHomePage()));
+        context,
+        MaterialPageRoute(builder: (context) => FarmerScreen(initialIndex: 0)),
+      );
 
       // Clear form fields after submission
       _titleController.clear();
@@ -498,7 +501,7 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                SizedBox(width: screenWidth * 0.01),
+                                SizedBox(width: screenWidth * 0.02),
                                 SizedBox(
                                   height: screenHeight * 0.03,
                                   width: screenHeight * 0.03,
