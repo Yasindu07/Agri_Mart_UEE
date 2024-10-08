@@ -2,6 +2,16 @@ import 'package:flutter/material.dart';
 import 'add_card_details.dart';
 
 class AddPaymentMethodPage extends StatefulWidget {
+  final String deliveryAddress;
+  final String phoneNumber;
+  final String zipCode;
+
+  AddPaymentMethodPage({
+    required this.deliveryAddress,
+    required this.phoneNumber,
+    required this.zipCode,
+  });
+
   @override
   _AddPaymentMethodPageState createState() => _AddPaymentMethodPageState();
 }
@@ -74,27 +84,6 @@ class _AddPaymentMethodPageState extends State<AddPaymentMethodPage> {
           SizedBox(height: 10),
           Row(
             children: [
-              Icon(Icons.local_shipping,
-                  color: const Color(0xFF4CAF50)), // Cash on delivery icon
-              SizedBox(width: 10),
-              Expanded(
-                child: CheckboxListTile(
-                  activeColor: Colors.green,
-                  value: _cashOnDelivery,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _cashOnDelivery = value!;
-                      _debitCard = false;
-                      _creditCard = false;
-                    });
-                  },
-                  title: Text('Cash on Delivery'),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
               Icon(Icons.credit_card, color: Colors.orange), // Debit card icon
               SizedBox(width: 10),
               Expanded(
@@ -164,11 +153,15 @@ class _AddPaymentMethodPageState extends State<AddPaymentMethodPage> {
               ),
               SizedBox(height: 10),
               Text(
-                '123 Main Street, Springfield, IL 62704',
+                widget.deliveryAddress, // Display the address here
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
               ),
               Text(
-                'Phone: (555) 123-4567',
+                'Phone: ${widget.phoneNumber}', // Display the phone number here
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+              ),
+              Text(
+                'Zip: ${widget.zipCode}', // Display the zip code here
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
               ),
             ],
@@ -181,12 +174,34 @@ class _AddPaymentMethodPageState extends State<AddPaymentMethodPage> {
   Widget _buildCheckoutButton() {
     return ElevatedButton(
       onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => AddPaymentMethodCardPage(),
-          ),
-        );
+        if (_cashOnDelivery || _debitCard || _creditCard) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddPaymentMethodCardPage(),
+            ),
+          );
+        } else {
+          // Show an alert if no payment method is selected
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Error'),
+                content:
+                    Text('Please select a payment method before proceeding.'),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close the dialog
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
       },
       child: Text(
         'Checkout',

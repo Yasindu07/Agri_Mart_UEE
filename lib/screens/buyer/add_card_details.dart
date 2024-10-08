@@ -11,6 +11,14 @@ class _AddPaymentMethodCardPageState extends State<AddPaymentMethodCardPage> {
   bool _cashOnDelivery = false;
   bool _debitCard = true;
 
+  // Controllers for text fields
+  final TextEditingController _cardNumberController = TextEditingController();
+  final TextEditingController _cardholderNameController =
+      TextEditingController();
+  final TextEditingController _expirationDateController =
+      TextEditingController();
+  final TextEditingController _cvvController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,7 +93,12 @@ class _AddPaymentMethodCardPageState extends State<AddPaymentMethodCardPage> {
                   });
                 },
               ),
-              Text('Credit card'),
+              Text('Visa card'),
+              SizedBox(width: 165),
+              Image.asset(
+                'assets/visa.jpeg', // Path to your image asset
+                height: 28, // Adjust height as needed
+              ),
             ],
           ),
           Row(
@@ -99,7 +112,12 @@ class _AddPaymentMethodCardPageState extends State<AddPaymentMethodCardPage> {
                   });
                 },
               ),
-              Text('Debit Card'),
+              Text('Master Card'),
+              SizedBox(width: 150),
+              Image.asset(
+                'assets/logo mastercard.jpeg', // Path to your image asset
+                height: 28, // Adjust height as needed
+              ),
             ],
           ),
         ],
@@ -113,25 +131,16 @@ class _AddPaymentMethodCardPageState extends State<AddPaymentMethodCardPage> {
       children: [
         Row(
           children: [
+            SizedBox(width: 8),
             Text(
               'Add new card',
               style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
             ),
-            SizedBox(width: 112),
-            Image.asset(
-              'assets/visa.jpeg', // Path to your image asset (you can use any image here)
-              height: 28, // Adjust height as needed
-            ),
-            SizedBox(width: 8),
-            Image.asset(
-              'assets/logo mastercard.jpeg', // Path to your image asset (you can use any image here)
-              height: 28, // Adjust height as needed
-            ),
-            SizedBox(width: 8), // Space between the image and text
           ],
         ),
         SizedBox(height: 20),
         TextField(
+          controller: _cardNumberController,
           decoration: InputDecoration(
             labelText: 'Card Number',
             border: OutlineInputBorder(
@@ -141,6 +150,7 @@ class _AddPaymentMethodCardPageState extends State<AddPaymentMethodCardPage> {
         ),
         SizedBox(height: 10),
         TextField(
+          controller: _cardholderNameController,
           decoration: InputDecoration(
             labelText: 'Cardholder Name',
             border: OutlineInputBorder(
@@ -150,6 +160,7 @@ class _AddPaymentMethodCardPageState extends State<AddPaymentMethodCardPage> {
         ),
         SizedBox(height: 10),
         TextField(
+          controller: _expirationDateController,
           decoration: InputDecoration(
             labelText: 'MM/YY',
             border: OutlineInputBorder(
@@ -159,6 +170,7 @@ class _AddPaymentMethodCardPageState extends State<AddPaymentMethodCardPage> {
         ),
         SizedBox(height: 10),
         TextField(
+          controller: _cvvController,
           decoration: InputDecoration(
             labelText: 'CVV',
             border: OutlineInputBorder(
@@ -174,12 +186,15 @@ class _AddPaymentMethodCardPageState extends State<AddPaymentMethodCardPage> {
   Widget _buildSaveButton() {
     return ElevatedButton(
       onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SuccessPage(),
-          ),
-        );
+        // Validate card details
+        if (_validateCardDetails()) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SuccessPage(),
+            ),
+          );
+        }
       },
       child: Text(
         'Save & Confirm',
@@ -192,6 +207,57 @@ class _AddPaymentMethodCardPageState extends State<AddPaymentMethodCardPage> {
         ),
         padding: EdgeInsets.symmetric(horizontal: 140, vertical: 10),
       ),
+    );
+  }
+
+  bool _validateCardDetails() {
+    String cardNumber = _cardNumberController.text.trim();
+    String cardholderName = _cardholderNameController.text.trim();
+    String expirationDate = _expirationDateController.text.trim();
+    String cvv = _cvvController.text.trim();
+
+    if (cardNumber.isEmpty ||
+        cardholderName.isEmpty ||
+        expirationDate.isEmpty ||
+        cvv.isEmpty) {
+      _showErrorDialog('Please fill in all fields.');
+      return false;
+    }
+
+    // Validate card number (example: length check)
+    if (cardNumber.length < 16 || cardNumber.length > 19) {
+      _showErrorDialog('Card number must be between 16 to 19 digits.');
+      return false;
+    }
+
+    // Validate CVV (example: length check)
+    if (cvv.length < 3 || cvv.length > 4) {
+      _showErrorDialog('CVV must be 3 or 4 digits.');
+      return false;
+    }
+
+    // Additional validation for expiration date can be added here
+
+    return true; // All validations passed
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

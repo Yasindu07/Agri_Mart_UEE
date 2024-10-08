@@ -1,3 +1,4 @@
+import 'package:agro_mart/screens/buyer/product_list.dart';
 import 'package:flutter/material.dart';
 
 class BuyerSearch extends StatefulWidget {
@@ -35,7 +36,7 @@ class _BuyerSearchState extends State<BuyerSearch> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              const SizedBox(height: 76.0), // Space between AppBar and GridView
+              const SizedBox(height: 66.0), // Space between AppBar and GridView
               Expanded(
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -50,22 +51,22 @@ class _BuyerSearchState extends State<BuyerSearch> {
                       {
                         'name': 'Vegetables',
                         'image': 'assets/vegetables.jpeg',
-                        'color': const Color.fromRGBO(76, 175, 80, 1),
+                        'color': Color(0xFF28A745),
                       },
                       {
                         'name': 'Fruits',
                         'image': 'assets/fruits.jpeg',
-                        'color': const Color.fromRGBO(76, 175, 80, 1),
+                        'color': Color(0xFF28A745),
                       },
                       {
                         'name': 'Seeds',
                         'image': 'assets/seeds.jpeg',
-                        'color': const Color.fromRGBO(76, 175, 80, 1),
+                        'color': Color(0xFF28A745),
                       },
                       {
                         'name': 'Dry Foods',
                         'image': 'assets/dryfood.jpeg',
-                        'color': const Color.fromRGBO(76, 175, 80, 1),
+                        'color': Color(0xFF28A745),
                       },
                     ];
                     return CategoryCard(
@@ -88,58 +89,67 @@ class _BuyerSearchState extends State<BuyerSearch> {
 class CategoryCard extends StatelessWidget {
   final String name;
   final String image;
-  final Color backgroundColor; // Background color parameter
+  final Color backgroundColor;
 
   const CategoryCard({
     Key? key,
     required this.name,
     required this.image,
-    this.backgroundColor =
-        const Color.fromRGBO(76, 175, 80, 1), // Default background color
+    this.backgroundColor = const Color.fromRGBO(76, 175, 80, 1),
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: backgroundColor, // Set the background color
-          borderRadius: BorderRadius.circular(12), // Match the card's radius
+    return GestureDetector(
+      onTap: () {
+        // Navigate to the ProductList page when the card is tapped
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductList(),
+          ),
+        );
+      },
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
         ),
-        child: Column(
-          children: [
-            // Image section
-            Padding(
-              padding: const EdgeInsets.all(8.0), // Padding around the image
-              child: ClipRRect(
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(12),
-                ),
-                child: Image.asset(
-                  image,
-                  fit: BoxFit.cover,
-                  height: 167, // Set the desired height for the image
-                  width: double.infinity, // Keep the width as full
-                ),
-              ),
-            ),
-            // Text section
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                name,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Colors
-                      .white, // Optional: change text color for better contrast
+        child: Container(
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            children: [
+              // Image section
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(12),
+                  ),
+                  child: Image.asset(
+                    image,
+                    fit: BoxFit.cover,
+                    height: 160,
+                    width: double.infinity,
+                  ),
                 ),
               ),
-            ),
-          ],
+              // Text section
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

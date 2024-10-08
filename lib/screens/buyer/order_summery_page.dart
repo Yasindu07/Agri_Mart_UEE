@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'add_payment_method.dart'; // Make sure you import the AddPaymentMethodPage here
+import 'add_payment_method.dart'; // Import the AddPaymentMethodPage
 
 class OrderSummaryPage extends StatefulWidget {
   final int totalItems;
-  final int totalCost;
+  final double pricePerKg; // Added pricePerKg parameter
+  final double availableQuantity; // Added availableQuantity parameter
   final double deliveryCharge;
 
   // Constructor to accept totalItems, totalCost, and deliveryCharge
   OrderSummaryPage({
     required this.totalItems,
-    required this.totalCost,
+    required this.pricePerKg,
+    required this.availableQuantity,
     required this.deliveryCharge,
   });
 
@@ -22,6 +24,7 @@ class _OrderSummaryPageState extends State<OrderSummaryPage> {
   String deliveryAddress = '';
   String phoneNumber = '';
   String zipCode = ''; // Initialize zip code
+  bool isAddressSaved = false; // New flag to check if address is saved
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +35,7 @@ class _OrderSummaryPageState extends State<OrderSummaryPage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
-            Navigator.pop(context); // Go back to the cart page
+            Navigator.pop(context); // Go back to the previous screen
           },
         ),
         title: Text(
@@ -77,6 +80,9 @@ class _OrderSummaryPageState extends State<OrderSummaryPage> {
     final TextEditingController _zipCodeController =
         TextEditingController(text: zipCode);
 
+    // Form Key
+    final _formKey = GlobalKey<FormState>();
+
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -84,109 +90,180 @@ class _OrderSummaryPageState extends State<OrderSummaryPage> {
         borderRadius: BorderRadius.circular(10),
         boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 5)],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.local_shipping,
-                  color: const Color.fromARGB(255, 255, 255, 255), size: 30),
-              SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  'Delivery Address',
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
+      child: Form(
+        key: _formKey, // Assign the form key here
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.local_shipping,
+                    color: const Color.fromARGB(255, 255, 255, 255), size: 30),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Delivery Address',
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: 5),
-          TextField(
-            controller: _addressController,
-            decoration: InputDecoration(
-              hintText: 'Enter your delivery address',
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                    color: const Color.fromARGB(255, 255, 255, 255),
-                    width: 2.0),
-                borderRadius: BorderRadius.circular(
-                    10.0), // Rounded corners for focused state
-              ),
-              contentPadding:
-                  EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              ],
             ),
-            onChanged: (value) {
-              // Update delivery address in state when user types
-              deliveryAddress = value;
-            },
-          ),
-          SizedBox(height: 10),
-          TextField(
-            controller: _phoneController,
-            decoration: InputDecoration(
-              hintText: 'Enter your phone number',
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                    color: const Color.fromARGB(255, 255, 255, 255),
-                    width: 2.0),
-                borderRadius: BorderRadius.circular(
-                    10.0), // Rounded corners for focused state
+            SizedBox(height: 5),
+            TextFormField(
+              controller: _addressController,
+              decoration: InputDecoration(
+                hintText: 'Enter your delivery address',
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: const Color.fromARGB(255, 255, 255, 255),
+                      width: 2.0),
+                  borderRadius: BorderRadius.circular(
+                      10.0), // Rounded corners for focused state
+                ),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 10, horizontal: 10),
               ),
-              contentPadding:
-                  EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-            ),
-            onChanged: (value) {
-              // Update phone number in state when user types
-              phoneNumber = value;
-            },
-          ),
-          SizedBox(height: 10),
-          TextField(
-            controller: _zipCodeController,
-            decoration: InputDecoration(
-              hintText: 'Enter your zip code',
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                    color: const Color.fromARGB(255, 255, 255, 255),
-                    width: 2.0),
-                borderRadius: BorderRadius.circular(
-                    10.0), // Rounded corners for focused state
-              ),
-              contentPadding:
-                  EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-            ),
-            onChanged: (value) {
-              // Update zip code in state when user types
-              zipCode = value;
-            },
-          ),
-          SizedBox(height: 10),
-          // Save Icon Button
-          Align(
-            alignment: Alignment.centerRight,
-            child: IconButton(
-              icon: Icon(Icons.save,
-                  color: const Color.fromARGB(255, 255, 255, 255), size: 30),
-              onPressed: () {
-                setState(() {
-                  // Show a message when the save button is pressed
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Address saved successfully!'),
-                    duration: Duration(seconds: 2),
-                  ));
-                });
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your delivery address';
+                }
+                return null; // Return null if valid
+              },
+              onChanged: (value) {
+                deliveryAddress =
+                    value; // Update delivery address in state when user types
               },
             ),
-          ),
-        ],
+            SizedBox(height: 10),
+            TextFormField(
+              controller: _phoneController,
+              decoration: InputDecoration(
+                hintText: 'Enter your phone number',
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: const Color.fromARGB(255, 255, 255, 255),
+                      width: 2.0),
+                  borderRadius: BorderRadius.circular(
+                      10.0), // Rounded corners for focused state
+                ),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your phone number';
+                } else if (!RegExp(r'^\+?[0-9]{10,15}$').hasMatch(value)) {
+                  return 'Enter a valid phone number';
+                }
+                return null; // Return null if valid
+              },
+              onChanged: (value) {
+                phoneNumber =
+                    value; // Update phone number in state when user types
+              },
+            ),
+            SizedBox(height: 10),
+            TextFormField(
+              controller: _zipCodeController,
+              decoration: InputDecoration(
+                hintText: 'Enter your zip code',
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: const Color.fromARGB(255, 255, 255, 255),
+                      width: 2.0),
+                  borderRadius: BorderRadius.circular(
+                      10.0), // Rounded corners for focused state
+                ),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your zip code';
+                } else if (!RegExp(r'^\d{5}(?:[-\s]\d{4})?$').hasMatch(value)) {
+                  return 'Enter a valid zip code';
+                }
+                return null; // Return null if valid
+              },
+              onChanged: (value) {
+                zipCode = value; // Update zip code in state when user types
+              },
+            ),
+            SizedBox(height: 10),
+            // Save Icon Button
+            Align(
+              alignment: Alignment.centerRight,
+              child: Row(
+                mainAxisSize: MainAxisSize
+                    .min, // To size the row to the minimum width needed
+                children: [
+                  Text(
+                    'Save', // The text label
+                    style: TextStyle(
+                      color: const Color.fromARGB(
+                          255, 255, 255, 255), // Text color
+                      fontWeight: FontWeight.bold, // Text style
+                      fontSize: 16, // Font size
+                    ),
+                  ),
+                  SizedBox(
+                      width: 8), // Add some space between the text and the icon
+                  IconButton(
+                    icon: Icon(
+                      Icons.save,
+                      color: const Color.fromARGB(255, 255, 255, 255),
+                      size: 30,
+                    ),
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        setState(() {
+                          isAddressSaved =
+                              true; // Only set to true if all fields are valid
+
+                          // Show a dialog box when the save button is pressed
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Success'),
+                                content: Text('Address saved successfully!'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pop(); // Close the dialog
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        });
+                      } else {
+                        setState(() {
+                          isAddressSaved =
+                              false; // If not valid, reset the flag
+                        });
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildOrderInformation() {
+    // Calculate the total cost based on price per kg and available quantity
+    double totalCost = widget.pricePerKg * widget.availableQuantity;
+
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -208,12 +285,14 @@ class _OrderSummaryPageState extends State<OrderSummaryPage> {
             ],
           ),
           SizedBox(height: 10),
-          Text('Total Items: ${widget.totalItems}'),
-          Text('Total Cost: Rs ${widget.totalCost}'),
-          Text('Delivery Charge: Rs ${widget.deliveryCharge}'),
+          Text('Total Items: ${widget.totalItems}'), // Display total items
+          Text(
+              'Total Cost: Rs ${totalCost.toStringAsFixed(2)}'), // Display calculated total cost
+          Text(
+              'Delivery Charge: Rs ${widget.deliveryCharge.toStringAsFixed(2)}'),
           Divider(),
           Text(
-            'Final Amount: Rs ${widget.totalCost + widget.deliveryCharge}',
+            'Final Amount: Rs ${(totalCost + widget.deliveryCharge).toStringAsFixed(2)}', // Display final amount
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ],
@@ -238,12 +317,11 @@ class _OrderSummaryPageState extends State<OrderSummaryPage> {
           children: [
             // Previous Button
             SizedBox(
-              width: 160, // Set width for both buttons
-              height: 60, // Set height for both buttons
+              width: 160,
+              height: 60,
               child: ElevatedButton(
                 onPressed: () {
-                  // Navigate to the previous screen
-                  Navigator.pop(context); // Go back to the previous page
+                  Navigator.pop(context);
                 },
                 child: Text(
                   'No',
@@ -254,28 +332,52 @@ class _OrderSummaryPageState extends State<OrderSummaryPage> {
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 143, 0,
-                      0), // Button background color (grey for previous)
+                  backgroundColor: const Color.fromARGB(255, 143, 0, 0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
               ),
             ),
-
             // Next Button
             SizedBox(
-              width: 160, // Set width for both buttons
-              height: 60, // Set height for both buttons
+              width: 160,
+              height: 60,
               child: ElevatedButton(
                 onPressed: () {
-                  // Navigate to the Add Payment Method Page
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AddPaymentMethodPage(),
-                    ),
-                  );
+                  if (isAddressSaved) {
+                    // Navigate to the Add Payment Method Page only if the address is saved
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddPaymentMethodPage(
+                          deliveryAddress: deliveryAddress,
+                          phoneNumber: phoneNumber,
+                          zipCode: zipCode,
+                        ),
+                      ),
+                    );
+                  } else {
+                    // Show an alert or error message if the address is not saved
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Not completed!'),
+                          content: Text(
+                              'Please fill and save your delivery address, phone number, and zip code before proceeding.'),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text('OK'),
+                              onPressed: () {
+                                Navigator.of(context).pop(); // Close the dialog
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
                 },
                 child: Text(
                   'Next',
@@ -285,8 +387,7 @@ class _OrderSummaryPageState extends State<OrderSummaryPage> {
                       fontSize: 23),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      const Color(0xFF4CAF50), // Green for Next button
+                  backgroundColor: const Color.fromARGB(255, 0, 143, 72),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
