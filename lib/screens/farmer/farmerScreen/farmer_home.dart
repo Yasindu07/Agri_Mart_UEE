@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:agro_mart/screens/farmer/farmerScreen/farmer_product_add.dart';
+import 'package:agro_mart/screens/farmer/farmerScreen/farmer_product_update.dart';
 import 'package:agro_mart/services/product_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:agro_mart/model/product_model.dart';
 
@@ -317,77 +319,114 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
   // Product Card Builder
   Widget _buildProductCard(
       Product product, double screenWidth, double screenHeight) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: screenHeight * 0.015),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      color: Theme.of(context).colorScheme.secondary,
-      child: Padding(
-        padding: EdgeInsets.all(screenWidth * 0.03),
-        child: Row(
-          children: [
-            // Product Image
-            ClipRRect(
-              borderRadius: BorderRadius.circular(screenWidth * 0.03),
-              child: Image.network(
-                product.imageUrls.isNotEmpty
-                    ? product.imageUrls[0]
-                    : 'https://via.placeholder.com/70',
-                width: screenWidth * 0.22,
-                height: screenWidth * 0.22,
-                fit: BoxFit.cover,
+    return Slidable(
+      key: ValueKey(product.id),
+      startActionPane: ActionPane(
+        motion: const DrawerMotion(),
+        children: [
+          SlidableAction(
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.white,
+            icon: Icons.delete,
+            label: "Delete",
+            borderRadius: BorderRadius.circular(15),
+            onPressed: (context) async {
+              await _productService.deleteProduct(
+                product.id,
+                product.imageUrls,
+              );
+            },
+          ),
+          SlidableAction(
+            backgroundColor: Colors.amber,
+            foregroundColor: Colors.white,
+            icon: Icons.edit,
+            label: "Edit",
+            borderRadius: BorderRadius.circular(15),
+            onPressed: (context) {
+              Navigator.pushReplacement(context, MaterialPageRoute(
+                builder: (context) {
+                  return FarmerProductUpdate(
+                    product: product,
+                  );
+                },
+              ));
+            },
+          ),
+        ],
+      ),
+      child: Card(
+        margin: EdgeInsets.symmetric(vertical: screenHeight * 0.015),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        color: Theme.of(context).colorScheme.secondary,
+        child: Padding(
+          padding: EdgeInsets.all(screenWidth * 0.03),
+          child: Row(
+            children: [
+              // Product Image
+              ClipRRect(
+                borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                child: Image.network(
+                  product.imageUrls.isNotEmpty
+                      ? product.imageUrls[0]
+                      : 'https://via.placeholder.com/70',
+                  width: screenWidth * 0.22,
+                  height: screenWidth * 0.22,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-            SizedBox(width: screenWidth * 0.03),
-            // Product Details
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    product.title,
-                    style: GoogleFonts.poppins(
-                      fontSize: screenWidth * 0.036,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.black,
+              SizedBox(width: screenWidth * 0.03),
+              // Product Details
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      product.title,
+                      style: GoogleFonts.poppins(
+                        fontSize: screenWidth * 0.036,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.black,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: screenHeight * 0.01),
-                  Text(
-                    'PID: ${product.id}',
-                    style: GoogleFonts.poppins(
-                      fontSize: screenWidth * 0.025,
+                    SizedBox(height: screenHeight * 0.01),
+                    Text(
+                      'PID: ${product.id}',
+                      style: GoogleFonts.poppins(
+                        fontSize: screenWidth * 0.025,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: screenHeight * 0.01),
-                  Text(
-                    'Category: ${product.category}',
-                    style: GoogleFonts.poppins(
-                      fontSize: screenWidth * 0.028,
-                      color: const Color.fromARGB(255, 99, 98, 98),
+                    SizedBox(height: screenHeight * 0.01),
+                    Text(
+                      'Category: ${product.category}',
+                      style: GoogleFonts.poppins(
+                        fontSize: screenWidth * 0.028,
+                        color: const Color.fromARGB(255, 99, 98, 98),
+                      ),
                     ),
-                  ),
-                  SizedBox(height: screenHeight * 0.01),
-                  Row(
-                    children: [
-                      Text(
-                        'Quantity: ${product.quantity}',
-                        style: GoogleFonts.poppins(
-                          fontSize: screenWidth * 0.028,
-                          color: const Color.fromARGB(255, 99, 98, 98),
+                    SizedBox(height: screenHeight * 0.01),
+                    Row(
+                      children: [
+                        Text(
+                          'Quantity: ${product.quantity}',
+                          style: GoogleFonts.poppins(
+                            fontSize: screenWidth * 0.028,
+                            color: const Color.fromARGB(255, 99, 98, 98),
+                          ),
                         ),
-                      ),
-                      Spacer(),
-                      Text(
-                        '${product.pricePerKg} RS',
-                        style: GoogleFonts.poppins(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ],
+                        Spacer(),
+                        Text(
+                          '${product.pricePerKg} RS',
+                          style: GoogleFonts.poppins(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
