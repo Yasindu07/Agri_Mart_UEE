@@ -5,6 +5,7 @@ import 'package:agro_mart/screens/buyer/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
+
 class BuyerBottomNav extends StatefulWidget {
   const BuyerBottomNav({super.key});
 
@@ -24,10 +25,10 @@ class _BuyerBottomNavState extends State<BuyerBottomNav> {
       icon: Icon(Icons.search),
       title: Text("Search"),
     ),
-    SalomonBottomBarItem(
-      icon: Icon(Icons.shopping_cart),
-      title: Text("Cart"),
-    ),
+    // SalomonBottomBarItem(
+    //   icon: Icon(Icons.shopping_cart),
+    //   title: Text("Cart"),
+    // ),
     SalomonBottomBarItem(
       icon: Icon(Icons.comment_bank_outlined),
       title: Text("Community"),
