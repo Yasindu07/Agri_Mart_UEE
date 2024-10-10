@@ -1,5 +1,6 @@
 
-import 'package:agro_mart/screens/community-reports/price_list_page.dart';
+import 'package:agro_mart/screens/community-reports/community_posts_page.dart';
+
 //import 'package:agro_mart/model/product_model.dart';
 import 'package:agro_mart/screens/buyer/buyer_commu.dart';
 
@@ -35,8 +36,8 @@ class _BuyerBottomNavState extends State<BuyerBottomNav> {
       title: Text("Cart"),
     ),
     SalomonBottomBarItem(
-      icon: Icon(Icons.analytics),
-      title: Text("Price Details"),
+      icon: Icon(Icons.comment_bank_outlined),
+      title: Text("Community"),
     ),
     
     SalomonBottomBarItem(
@@ -49,7 +50,7 @@ class _BuyerBottomNavState extends State<BuyerBottomNav> {
     const BuyerHomePage(),
     BuyerSearch(),
     CartPage(),
-    MarketTrendsScreen(),
+    CommunityPostsPage(),
     const ProfilePage(),
   ];
   @override
