@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'add_location_page.dart';
+//import 'add_location_page.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -21,7 +21,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _phoneNoController = TextEditingController();
   bool _isEditing = false;
 
-  String? _profileImageUrl;
+  String? _profilePicture;
   final ImagePicker _picker = ImagePicker();
 
   @override
@@ -45,7 +45,7 @@ class _ProfilePageState extends State<ProfilePage> {
       _addressController.text = data['address'] ?? '';
       _phoneNoController.text = data['phoneNo'] ?? '';
 
-      _profileImageUrl = data['profileImageUrl'];
+      _profilePicture = data['profilePicture'];
       setState(() {});
     }
   }
@@ -62,7 +62,7 @@ class _ProfilePageState extends State<ProfilePage> {
         'email': _emailController.text,
         'address': _addressController.text,
         'phoneNo': _phoneNoController.text,
-        'profileImageUrl': _profileImageUrl,
+        'profilePicture': _profilePicture,
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -82,12 +82,12 @@ class _ProfilePageState extends State<ProfilePage> {
     if (image != null) {
       String fileName = DateTime.now().millisecondsSinceEpoch.toString();
       Reference reference =
-          FirebaseStorage.instance.ref().child('profile_images/$fileName');
+          FirebaseStorage.instance.ref().child('profile_pictures/$fileName');
 
       UploadTask uploadTask = reference.putFile(File(image.path));
       await uploadTask;
 
-      _profileImageUrl = await reference.getDownloadURL();
+      _profilePicture = await reference.getDownloadURL();
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Profile image updated successfully!')),
@@ -96,7 +96,7 @@ class _ProfilePageState extends State<ProfilePage> {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({'profileImageUrl': _profileImageUrl});
+          .update({'profilePicture': _profilePicture});
 
       _loadUserData();
     }
@@ -220,11 +220,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     radius: 60,
                     backgroundColor:
                         Colors.transparent, // Changed to transparent
-                    backgroundImage: _profileImageUrl != null
-                        ? NetworkImage(_profileImageUrl!)
+                    backgroundImage: _profilePicture != null
+                        ? NetworkImage(_profilePicture!)
                         : const AssetImage('assets/images/placeholder.png')
                             as ImageProvider,
-                    child: _profileImageUrl == null
+                    child: _profilePicture == null
                         ? const Icon(
                             Icons.person,
                             size: 50,

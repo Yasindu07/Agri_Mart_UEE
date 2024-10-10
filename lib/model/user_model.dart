@@ -26,7 +26,7 @@ class UserModel {
       'name': name,
       'address': address,
       'phoneNo': phoneNo,
-      'profileImageUrl': profilePicture,
+      'profilePicture': profilePicture,
     };
   }
 }
