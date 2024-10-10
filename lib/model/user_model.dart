@@ -4,10 +4,10 @@ class UserModel {
   final String name; // Required parameter
   final String address; // Required parameter
 
-
   final String phoneNo; // Required parameter
 
-  final String? profileImageUrl; // Optional parameter
+  //final String? profileImageUrl; // Optional parameter
+  final String? profilePicture;
 
   UserModel({
     this.uid,
@@ -15,9 +15,7 @@ class UserModel {
     required this.name,
     required this.address,
     required this.phoneNo,
-
-
-    this.profileImageUrl,
+    this.profilePicture,
   });
 
   // Convert UserModel instance to a map for Firestore
@@ -28,9 +26,7 @@ class UserModel {
       'name': name,
       'address': address,
       'phoneNo': phoneNo,
-
-      
-      'profileImageUrl': profileImageUrl,
+      'profileImageUrl': profilePicture,
     };
   }
 }
