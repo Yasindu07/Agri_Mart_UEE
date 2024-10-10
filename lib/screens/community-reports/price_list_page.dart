@@ -163,7 +163,7 @@ class _MarketTrendsScreenState extends State<MarketTrendsScreen> with SingleTick
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MyProfile(),
+                builder: (context) => FarmerProfile(),
               ),
             );
           },
