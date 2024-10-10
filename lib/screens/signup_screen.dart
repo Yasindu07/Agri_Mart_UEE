@@ -1,3 +1,4 @@
+import 'package:agro_mart/model/user_model.dart';
 import 'package:agro_mart/screens/login_screen.dart';
 import 'package:agro_mart/services/auth_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -198,16 +199,30 @@ class _SignupScreenState extends State<SignupScreen> {
                             setState(() {
                               isLoading = true;
                             });
+
+                            // Register the user
                             User? user =
                                 await _auth.registerWithEmailAndPassword(
-                                    _emailController.text,
-                                    _passwordController.text);
-
-                            setState(() {
-                              isLoading = false;
-                            });
+                              _emailController.text,
+                              _passwordController.text,
+                            );
 
                             if (user != null) {
+                              // Create a UserModel instance
+                              UserModel userModel = UserModel(
+                                uid: user.uid,
+                                email: user.email,
+                                name:
+                                    _nameController.text, // Get name from input
+                                address: _addressController
+                                    .text, // Get address from input
+                                phoneNo: _phoneController.text,
+                                // Add any other required fields for UserModel
+                              );
+
+                              // Add user details
+                              await _auth.addUserDetails(userModel);
+
                               Fluttertoast.showToast(
                                 msg:
                                     "Account created successfully. Now you can login!",
@@ -219,6 +234,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                     Theme.of(context).colorScheme.surface,
                                 fontSize: 16.0,
                               );
+
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
@@ -236,6 +252,10 @@ class _SignupScreenState extends State<SignupScreen> {
                                 fontSize: 16.0,
                               );
                             }
+
+                            setState(() {
+                              isLoading = false;
+                            });
                           }
                         },
                         child: isLoading
@@ -268,6 +288,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               ),
                       ),
                     ),
+
                     SizedBox(height: screenHeight * 0.03),
                     Center(
                       child: Row(
