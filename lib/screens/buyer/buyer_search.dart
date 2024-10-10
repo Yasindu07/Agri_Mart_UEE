@@ -2,7 +2,9 @@ import 'package:agro_mart/screens/buyer/product_list.dart';
 import 'package:flutter/material.dart';
 
 class BuyerSearch extends StatefulWidget {
-  const BuyerSearch({super.key});
+  final String userId; // Add userId parameter to track the logged-in user
+
+  const BuyerSearch({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<BuyerSearch> createState() => _BuyerSearchState();
@@ -72,8 +74,8 @@ class _BuyerSearchState extends State<BuyerSearch> {
                     return CategoryCard(
                       name: categories[index]['name']!,
                       image: categories[index]['image']!,
-                      backgroundColor: categories[index]['color']
-                          as Color, // Cast to Color type
+                      backgroundColor: categories[index]['color'] as Color,
+                      userId: widget.userId, // Pass the userId here
                     );
                   },
                 ),
@@ -90,11 +92,13 @@ class CategoryCard extends StatelessWidget {
   final String name;
   final String image;
   final Color backgroundColor;
+  final String userId; // Add userId parameter
 
   const CategoryCard({
     Key? key,
     required this.name,
     required this.image,
+    required this.userId, // Include userId in the constructor
     this.backgroundColor = const Color.fromRGBO(76, 175, 80, 1),
   }) : super(key: key);
 
@@ -102,11 +106,13 @@ class CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Navigate to the ProductList page when the card is tapped
+        // Navigate to the ProductList page and pass the userId when the card is tapped
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ProductList(),
+            builder: (context) => ProductList(
+              userId: userId, // Pass the userId to ProductList
+            ),
           ),
         );
       },

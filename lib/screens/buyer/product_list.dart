@@ -1,15 +1,14 @@
 import 'dart:async';
-
 import 'package:agro_mart/screens/buyer/buyer_product_preview.dart';
 import 'package:agro_mart/services/product_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:agro_mart/model/product_model.dart';
 
-
-
 class ProductList extends StatefulWidget {
-  const ProductList({super.key});
+  final String userId; // Add userId parameter to track the logged-in user
+
+  const ProductList({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<ProductList> createState() => _ProductListState();
@@ -53,8 +52,6 @@ class _ProductListState extends State<ProductList> {
     });
   }
 
- 
-
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -63,7 +60,7 @@ class _ProductListState extends State<ProductList> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Welcome Ridma!',
+          'Welcome!',
           style: GoogleFonts.poppins(
             color: Colors.black,
             fontWeight: FontWeight.bold,
@@ -72,12 +69,15 @@ class _ProductListState extends State<ProductList> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.notifications, color: Colors.black),
+            icon: Icon(
+              Icons.shopping_cart,
+              color: Colors.black,
+              size: 30.0,
+            ),
             onPressed: () {
-              // Handle notifications
+              // Handle cart navigation
             },
           ),
-         
         ],
       ),
       body: Column(
@@ -128,7 +128,6 @@ class _ProductListState extends State<ProductList> {
                 ),
                 filled: true,
                 fillColor: Colors.white,
-                // elevation: 4, // Remove this line
               ),
             ),
           ),
@@ -202,45 +201,38 @@ class _ProductListState extends State<ProductList> {
     );
   }
 
-  // Updated Product List Builder
+  // Product List Builder
   Widget _buildProductList() {
-    final screenHeight =
-        MediaQuery.of(context).size.height; // Get screen height
-    final screenWidth = MediaQuery.of(context).size.width; // Get screen width
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return StreamBuilder<List<Product>>(
       stream: _productService.getAllProducts(), // Stream from Firestore
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator()); // Loading state
+          return Center(child: CircularProgressIndicator());
         }
 
         if (snapshot.hasError) {
-          // Improved error handling
-          print('Error loading products: ${snapshot.error}'); // Log the error
-          return Center(
-              child: Text(
-                  'Error loading products: ${snapshot.error}')); // Display error message
+          print('Error loading products: ${snapshot.error}');
+          return Center(child: Text('Error loading products'));
         }
 
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text('No products found')); // No data state
+          return Center(child: Text('No products found'));
         }
 
         final products = snapshot.data!.where((product) {
-          // Check if the product matches the search query
           final matchesSearchQuery =
               product.title.toLowerCase().contains(searchQuery) ||
                   product.category.toLowerCase().contains(searchQuery);
 
-          // Check if the product matches the selected category (trim and lowercase)
           final matchesCategory =
               selectedCategory.toLowerCase().trim() == 'all' ||
                   selectedCategory.toLowerCase().trim().isEmpty ||
                   product.category.toLowerCase().trim() ==
                       selectedCategory.toLowerCase().trim();
 
-          // Return true if both conditions are met
           return matchesSearchQuery && matchesCategory;
         }).toList();
 
@@ -251,13 +243,10 @@ class _ProductListState extends State<ProductList> {
         return GridView.builder(
           padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount:
-                (screenWidth / 200).floor(), // Dynamic cross axis count
-            mainAxisSpacing: screenHeight * 0.015, // Space between rows
-            crossAxisSpacing: screenWidth * 0.03, // Space between columns
-            childAspectRatio: screenWidth < 600
-                ? 0.75
-                : 1.0, // Aspect ratio based on screen width
+            crossAxisCount: (screenWidth / 200).floor(),
+            mainAxisSpacing: screenHeight * 0.015,
+            crossAxisSpacing: screenWidth * 0.03,
+            childAspectRatio: screenWidth < 600 ? 0.75 : 1.0,
           ),
           itemCount: products.length,
           itemBuilder: (context, index) {
@@ -269,18 +258,17 @@ class _ProductListState extends State<ProductList> {
     );
   }
 
-// Product Card Builder
+  // Product Card Builder
   Widget _buildProductCard(
       Product product, double screenWidth, double screenHeight) {
     return GestureDetector(
-      // Use GestureDetector to handle taps
       onTap: () {
-        // Navigate to the BuyerProductPreviewPage and pass the selected product
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => BuyerProductPreviewPage(
-              product: product, // Pass the product to the preview page
+              product: product,
+              userId: widget.userId, // Pass the userId to the preview page
             ),
           ),
         );
@@ -301,10 +289,9 @@ class _ProductListState extends State<ProductList> {
                   child: Image.network(
                     product.imageUrls.isNotEmpty
                         ? product.imageUrls[0]
-                        : 'https://via.placeholder.com/70', // Fallback image
+                        : 'https://via.placeholder.com/70',
                     width: double.infinity,
-                    height:
-                        screenWidth * 0.25, // Height relative to screen width
+                    height: screenWidth * 0.25,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -328,23 +315,20 @@ class _ProductListState extends State<ProductList> {
                 ),
                 SizedBox(height: screenHeight * 0.01),
 
-                // Ensure button fits within card
+                // Button to View Product
                 Expanded(
                   child: Align(
                     alignment: Alignment.bottomLeft,
                     child: ElevatedButton(
                       onPressed: () {
-                        // Call the addToCart method and pass the current product
-                        // addToCart(product);
+                        // Handle button action
                       },
                       child: Text(
                         'View',
-                        style: TextStyle(
-                          color: Colors.white, // Set the text color here
-                        ),
+                        style: TextStyle(color: Colors.white),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF28A745), // Background color
+                        backgroundColor: Color(0xFF28A745),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),

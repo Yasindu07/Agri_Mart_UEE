@@ -13,16 +13,14 @@ import 'package:image_picker/image_picker.dart'; // For selecting images
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-
-
-class MyProfile extends StatefulWidget {
-  const MyProfile({super.key});
+class FarmerProfile extends StatefulWidget {
+  const FarmerProfile({super.key});
 
   @override
-  State<MyProfile> createState() => _MyProfileState();
+  State<FarmerProfile> createState() => _FarmerProfileState();
 }
 
-class _MyProfileState extends State<MyProfile> {
+class _FarmerProfileState extends State<FarmerProfile> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
@@ -82,8 +80,8 @@ class _MyProfileState extends State<MyProfile> {
         setState(() {
           _userData = userDoc.data();
           _username = _userData!['displayName'] ?? 'Anonymous';
-          _userProfileImage =
-              _userData!['profilePicture'] ?? 'https://images.pexels.com/photos/2379003/pexels-photo-2379003.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
+          _userProfileImage = _userData!['profilePicture'] ??
+              'https://images.pexels.com/photos/2379003/pexels-photo-2379003.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
           _address = _userData!['address'] ?? 'N/A';
           _phoneNumber = _userData!['phone'] ?? 'N/A';
           _role = _userData!['role'] ?? 'N/A';
@@ -229,16 +227,16 @@ class _MyProfileState extends State<MyProfile> {
       children: [
         ElevatedButton.icon(
           onPressed: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => EditDeletePostPage()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => EditDeletePostPage()));
           },
           icon: Icon(Icons.post_add),
           label: Text('My Posts'),
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 235, 233, 233), // Background color
+            backgroundColor:
+                const Color.fromARGB(255, 235, 233, 233), // Background color
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-           textStyle: GoogleFonts.poppins(fontSize: 16, color: Colors.white),
-            
+            textStyle: GoogleFonts.poppins(fontSize: 16, color: Colors.white),
           ),
         ),
         ElevatedButton.icon(
@@ -250,7 +248,8 @@ class _MyProfileState extends State<MyProfile> {
           icon: Icon(Icons.edit),
           label: Text('Edit Profile'),
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 235, 233, 233), // Background color
+            backgroundColor:
+                const Color.fromARGB(255, 235, 233, 233), // Background color
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             textStyle: GoogleFonts.poppins(fontSize: 16, color: Colors.white),
           ),
@@ -331,7 +330,8 @@ class _MyProfileState extends State<MyProfile> {
                           onTap: _pickImage,
                           child: CircleAvatar(
                             radius: 20,
-                            backgroundColor: Theme.of(context).colorScheme.primary,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
                             child: _isUploading
                                 ? SizedBox(
                                     width: 20,
@@ -356,8 +356,7 @@ class _MyProfileState extends State<MyProfile> {
                   _buildUserInfoTile('Email', _email, Icons.email),
                   _buildUserInfoTile('Name', _username, Icons.person),
                   _buildUserInfoTile('Address', _address, Icons.location_on),
-                  _buildUserInfoTile(
-                      'Phone Number', _phoneNumber, Icons.phone),
+                  _buildUserInfoTile('Phone Number', _phoneNumber, Icons.phone),
                   _buildUserInfoTile('Role', _role, Icons.work),
                   _buildUserInfoTile(
                     'Account Created',

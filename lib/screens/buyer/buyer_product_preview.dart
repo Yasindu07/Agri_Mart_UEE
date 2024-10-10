@@ -1,14 +1,16 @@
+import 'package:agro_mart/screens/buyer/cart/cart_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:agro_mart/model/product_model.dart';
-import 'cart_page.dart';
 
 class BuyerProductPreviewPage extends StatefulWidget {
   final Product product;
+  final String userId; // Add userId parameter
 
   const BuyerProductPreviewPage({
     Key? key,
     required this.product,
+    required this.userId, // Include userId in the constructor
   }) : super(key: key);
 
   @override
@@ -377,8 +379,9 @@ class _BuyerProductPreviewPageState extends State<BuyerProductPreviewPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => CartPage(
-                            // Pass the product to CartPage
-                            ),
+                          product: widget.product,
+                          userId: widget.userId, // Pass the userId here
+                        ),
                       ),
                     );
                   },

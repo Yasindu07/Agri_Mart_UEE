@@ -16,7 +16,8 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
-  String _profileImageUrl = 'https://images.pexels.com/photos/2379003/pexels-photo-2379003.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
+  String _profileImageUrl =
+      'https://images.pexels.com/photos/2379003/pexels-photo-2379003.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
 
   @override
   void initState() {
@@ -29,10 +30,14 @@ class _CustomAppBarState extends State<CustomAppBar> {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
         if (userDoc.exists) {
           setState(() {
-            _profileImageUrl = userDoc.get('profilePicture') ?? _profileImageUrl;
+            _profileImageUrl =
+                userDoc.get('profilePicture') ?? _profileImageUrl;
           });
         }
       }
@@ -66,7 +71,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MyProfile(),
+                builder: (context) => FarmerProfile(),
               ),
             );
           },
