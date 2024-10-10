@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:agro_mart/model/product_model.dart';
 import 'order_summery_page.dart';
+import 'cart_page.dart';
 
-class BuyerProductPreviewPage extends StatelessWidget {
+class BuyerProductPreviewPage extends StatefulWidget {
   final Product product;
 
   const BuyerProductPreviewPage({
@@ -10,26 +12,13 @@ class BuyerProductPreviewPage extends StatelessWidget {
     required this.product,
   }) : super(key: key);
 
-  Widget _buildRatingStars(double rating, double screenWidth) {
-    int fullStars = rating.floor(); // Full star count
-    int halfStars = (rating - fullStars >= 0.5) ? 1 : 0; // Half star count
-    int emptyStars = 5 - fullStars - halfStars; // Empty star count
+  @override
+  _BuyerProductPreviewPageState createState() =>
+      _BuyerProductPreviewPageState();
+}
 
-    return Row(
-      children: [
-        // Full stars
-        for (int i = 0; i < fullStars; i++)
-          Icon(Icons.star, color: Colors.amber, size: screenWidth * 0.045),
-        // Half stars
-        for (int i = 0; i < halfStars; i++)
-          Icon(Icons.star_half, color: Colors.amber, size: screenWidth * 0.045),
-        // Empty stars
-        for (int i = 0; i < emptyStars; i++)
-          Icon(Icons.star_border,
-              color: Colors.amber, size: screenWidth * 0.045),
-      ],
-    );
-  }
+class _BuyerProductPreviewPageState extends State<BuyerProductPreviewPage> {
+  String _selectedDeliveryMethod = 'Pick up'; // Default selected option
 
   @override
   Widget build(BuildContext context) {
@@ -38,20 +27,30 @@ class BuyerProductPreviewPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Product Preview',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-            fontSize: screenWidth * 0.06,
-          ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Product Preview',
+              style: GoogleFonts.poppins(
+                fontSize: screenWidth * 0.06,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            Text(
+              'step 2/2',
+              style: GoogleFonts.poppins(
+                fontSize: screenWidth * 0.04,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          ],
         ),
-        backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.black),
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -60,189 +59,342 @@ class BuyerProductPreviewPage extends StatelessWidget {
               Container(
                 height: screenHeight * 0.3,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(15),
                   image: DecorationImage(
-                    image: NetworkImage(product.imageUrls.isNotEmpty
-                        ? product.imageUrls[0]
-                        : 'https://via.placeholder.com/300'), // Fallback image
+                    image: NetworkImage(widget.product.imageUrls.isNotEmpty
+                        ? widget.product.imageUrls[0]
+                        : 'https://via.placeholder.com/150'),
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
               SizedBox(height: screenHeight * 0.02),
-
-              // Title and Price in a Row
+              // Product Title and Price
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment:
-                    CrossAxisAlignment.start, // Aligns price to the top
                 children: [
-                  // Product Title
                   Flexible(
                     child: Text(
-                      product.title,
-                      style: TextStyle(
-                        fontSize: screenWidth * 0.05,
+                      widget.product.title,
+                      style: GoogleFonts.poppins(
+                        fontSize: 25,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
-                      overflow:
-                          TextOverflow.visible, // Allow overflow to be visible
-                      maxLines: 2, // Limit to 2 lines
+                      softWrap: true,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  // Product Price
-                  Container(
-                    alignment:
-                        Alignment.topRight, // Align price to the top right
-                    child: Text(
-                      'Rs ${product.pricePerKg.toStringAsFixed(2)}',
-                      style: TextStyle(
-                        fontSize: screenWidth * 0.05,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                  SizedBox(width: screenWidth * 0.02),
+                  Text(
+                    '${widget.product.pricePerKg.toStringAsFixed(2)} Rs\n1 Kg',
+                    style: GoogleFonts.poppins(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.black,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ],
+              ),
+              SizedBox(height: screenHeight * 0.02),
+              // Location and Rating Cards
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // First Card
+                  Flexible(
+                    child: Card(
+                      color: Theme.of(context).colorScheme.secondary,
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(screenWidth * 0.015),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.eco,
+                                  color: Colors.black,
+                                  size: screenWidth * 0.05,
+                                ),
+                                SizedBox(width: screenWidth * 0.01),
+                                Flexible(
+                                  child: Text(
+                                    widget.product.category,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.black,
+                                    ),
+                                    softWrap: true,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Location Card
+                  Flexible(
+                    child: Card(
+                      color: Theme.of(context).colorScheme.secondary,
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(screenWidth * 0.015),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.location_on,
+                              color: Colors.black,
+                              size: screenWidth * 0.05,
+                            ),
+                            SizedBox(width: screenWidth * 0.01),
+                            Flexible(
+                              child: Text(
+                                widget.product.location,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black,
+                                ),
+                                softWrap: true,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: screenWidth * 0.02),
+                  // Rating Card
+                  // Second Card
+                  Flexible(
+                    child: Card(
+                      color: Theme.of(context).colorScheme.secondary,
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(screenWidth * 0.015),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                  size: screenWidth * 0.05,
+                                ),
+                                SizedBox(width: screenWidth * 0.005),
+                                Flexible(
+                                  child: Text(
+                                    '4.8',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.amber,
+                                    ),
+                                    softWrap: true,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                SizedBox(width: screenWidth * 0.01),
+                                Flexible(
+                                  child: Text(
+                                    '11 Reviews',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.black,
+                                    ),
+                                    softWrap: true,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
-
-              SizedBox(height: screenHeight * 0.01),
-
-              // Location Card
+              SizedBox(height: screenHeight * 0.02),
+              // Description Card
               Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(
-                      screenWidth * 0.04), // Add padding to the card
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on, // Location icon
-                            color: const Color(0xFF28A745), // Set icon color
-                            size: screenWidth *
-                                0.05, // Adjust size based on screen width
-                          ),
-                          SizedBox(
-                            width: screenWidth *
-                                0.02, // Add spacing between icon and text
-                          ),
-                          Flexible(
-                            child: Text(
-                              product.location,
-                              style: TextStyle(
-                                fontSize:
-                                    screenWidth * 0.045, // Adjust font size
-                                color: const Color(
-                                    0xFF000000), // Set text color to black
-                              ),
-                              overflow:
-                                  TextOverflow.ellipsis, // Prevent overflow
-                              maxLines: 1, // Limit to one line
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                          height: screenHeight *
-                              0.01), // Spacing between location and quantity
-                      // Available Quantity
-                      Text(
-                        'Available: ${product.quantity} Kg',
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.045, // Adjust font size
-                          color: Colors.black, // Set text color to black
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: screenHeight * 0.04),
-
-              // Description in a Card
-              Card(
-                color: const Color(0xFFDDFFD6),
+                color: Theme.of(context).colorScheme.secondary,
                 elevation: 4,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Container(
-                  width: screenWidth * 0.999, // Full width of the screen
-                  height: screenHeight * 0.2, // 20% of screen height
-                  padding: EdgeInsets.all(screenWidth * 0.04),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Description:',
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.045,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black, // Set text color to black
+                  width: screenWidth * 0.999,
+                  constraints: BoxConstraints(
+                    minHeight: screenHeight * 0.1,
+                    maxHeight: screenHeight * 0.6,
+                  ),
+                  padding: EdgeInsets.all(screenWidth * 0.03),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: screenHeight * 0.01),
+                        Center(
+                          child: Text(
+                            widget.product.description,
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.black,
+                            ),
+                            textAlign: TextAlign.justify,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: screenHeight * 0.01),
-                      Text(
-                        product.description,
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.04,
-                          color: Colors.black, // Set text color to black
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-
               SizedBox(height: screenHeight * 0.02),
+              Text(
+                'Quantity:  ${widget.product.quantity} Kg',
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black,
+                ),
+              ),
+              SizedBox(height: screenHeight * 0.02),
+
+              // Radio buttons for Pick up and Delivery
+              Row(
+                children: [
+                  Expanded(
+                    child: RadioListTile<String>(
+                      value: 'Pick up',
+                      groupValue: _selectedDeliveryMethod,
+                      title: Row(
+                        children: [
+                          Icon(
+                            Icons.store, // Icon for 'Pick up'
+                            color: Colors.black,
+                          ),
+                          SizedBox(
+                              width:
+                                  8), // Adjusted spacing between icon and text
+                          Flexible(
+                            child: Text(
+                              'Pick up',
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black,
+                              ),
+                              overflow:
+                                  TextOverflow.ellipsis, // Handles overflow
+                            ),
+                          ),
+                        ],
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedDeliveryMethod = value!;
+                        });
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: RadioListTile<String>(
+                      value: 'Delivery',
+                      groupValue: _selectedDeliveryMethod,
+                      title: Row(
+                        children: [
+                          Icon(
+                            Icons.local_shipping, // Icon for 'Delivery'
+                            color: Colors.black,
+                          ),
+                          SizedBox(
+                              width:
+                                  8), // Adjusted spacing between icon and text
+                          Flexible(
+                            child: Text(
+                              'Delivery',
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black,
+                              ),
+                              overflow:
+                                  TextOverflow.ellipsis, // Handles overflow
+                            ),
+                          ),
+                        ],
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedDeliveryMethod = value!;
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
 
               // Checkout Button
               Center(
                 child: ElevatedButton(
                   onPressed: () {
-                    // Assuming you have a product object with quantity and pricePerKg
-                    double totalCost = product.pricePerKg *
-                        product.quantity; // Calculate total cost
-
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => OrderSummaryPage(
-                          totalItems: product.quantity
-                              .toInt(), // Pass total items as an integer
-                          pricePerKg: product.pricePerKg, // Pass price per kg
-                          availableQuantity:
-                              product.quantity, // Pass available quantity
-                          deliveryCharge: 50.0, // Example delivery charge
-                        ),
+                        builder: (context) => CartPage(
+                            // Pass the product to CartPage
+                            ),
                       ),
                     );
                   },
                   child: Text(
                     'Checkout',
-                    style: TextStyle(
-                      fontSize: screenWidth * 0.045,
-                      fontWeight: FontWeight.bold,
+                    style: GoogleFonts.poppins(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
                       color: Colors.white,
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(40, 167, 69, 1),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: screenWidth * 0.2,
+                      vertical: screenHeight * 0.013,
                     ),
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 140, vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
               ),
+              SizedBox(height: screenHeight * 0.02),
             ],
           ),
         ),

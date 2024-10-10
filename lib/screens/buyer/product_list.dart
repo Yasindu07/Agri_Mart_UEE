@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:agro_mart/model/product_model.dart';
 
+
+
 class ProductList extends StatefulWidget {
   const ProductList({super.key});
 
@@ -51,6 +53,8 @@ class _ProductListState extends State<ProductList> {
     });
   }
 
+ 
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -73,12 +77,7 @@ class _ProductListState extends State<ProductList> {
               // Handle notifications
             },
           ),
-          IconButton(
-            icon: Icon(Icons.person, color: Colors.black),
-            onPressed: () {
-              // Handle profile navigation
-            },
-          ),
+         
         ],
       ),
       body: Column(
@@ -335,16 +334,8 @@ class _ProductListState extends State<ProductList> {
                     alignment: Alignment.bottomLeft,
                     child: ElevatedButton(
                       onPressed: () {
-                        // Navigate to the BuyerProductPreviewPage and pass the selected product
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BuyerProductPreviewPage(
-                              product:
-                                  product, // Pass the product to the preview page
-                            ),
-                          ),
-                        );
+                        // Call the addToCart method and pass the current product
+                        // addToCart(product);
                       },
                       child: Text(
                         'View',
