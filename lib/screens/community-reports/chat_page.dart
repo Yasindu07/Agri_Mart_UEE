@@ -8,6 +8,10 @@ import 'package:firebase_storage/firebase_storage.dart'; // For uploading images
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart'; // For formatting timestamps
+import 'package:agro_mart/screens/farmer/farmerScreen/farmer_profile.dart';
+import 'package:agro_mart/widgets/custom_app_bar.dart';
+
+
 
 class CommunityChatPage extends StatefulWidget {
   @override
@@ -285,41 +289,7 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white, // WhatsApp uses white background
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 1,
-        title: Row(
-          children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage(_userProfileImage),
-              radius: 18,
-            ),
-            SizedBox(width: 10),
-            Text(
-              'Community Chat',
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.black87,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.search, color: Colors.black87),
-            onPressed: () {
-              // Implement search functionality if needed
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.more_vert, color: Colors.black87),
-            onPressed: () {
-              // Implement additional options if needed
-            },
-          ),
-        ],
-      ),
+     appBar: const CustomAppBar(title: 'Community'),
       body: Column(
         children: [
           Expanded(child: _buildMessageList()),
