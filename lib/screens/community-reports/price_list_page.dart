@@ -1,5 +1,7 @@
 import 'package:agro_mart/screens/community-reports/price_reports.dart';
+import 'package:agro_mart/screens/farmer/farmerScreen/farmer_profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -13,6 +15,8 @@ class _MarketTrendsScreenState extends State<MarketTrendsScreen> with SingleTick
   TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> allItems = [];
   List<Map<String, dynamic>> displayedItems = [];
+    String _profileImageUrl = 'https://images.pexels.com/photos/2379003/pexels-photo-2379003.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
+
   bool isSearching = false;
   int currentPage = 1;
   int itemsPerPage = 5; // Changed to show 5 items per page
@@ -24,6 +28,7 @@ class _MarketTrendsScreenState extends State<MarketTrendsScreen> with SingleTick
     _tabController = TabController(length: 2, vsync: this);
     itemsStream = FirebaseFirestore.instance.collection('market_items').snapshots();
     _fetchItems();
+    _fetchUserProfileImage();
   }
 
   void _fetchItems() {
@@ -49,6 +54,24 @@ class _MarketTrendsScreenState extends State<MarketTrendsScreen> with SingleTick
       },
     );
   }
+
+  /// Fetches the current user's profile picture from Firebase
+  Future<void> _fetchUserProfileImage() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        if (userDoc.exists) {
+          setState(() {
+            _profileImageUrl = userDoc.get('profilePicture') ?? _profileImageUrl;
+          });
+        }
+      }
+    } catch (e) {
+      print('Error fetching profile image: $e');
+    }
+  }
+
 
   void _searchItems() {
     String query = _searchController.text.trim().toLowerCase();
@@ -129,12 +152,24 @@ class _MarketTrendsScreenState extends State<MarketTrendsScreen> with SingleTick
             Navigator.pop(context);
           },
         ),
-        actions: [
-          CircleAvatar(
-            backgroundImage: NetworkImage('https://images.pexels.com/photos/2379003/pexels-photo-2379003.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'),
+           actions: [
+        IconButton(
+          icon: CircleAvatar(
+            backgroundImage: NetworkImage(_profileImageUrl),
+            radius: 18,
           ),
-          SizedBox(width: 16),
-        ],
+          onPressed: () {
+            // Navigate to Farmer Profile Screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MyProfile(),
+              ),
+            );
+          },
+        ),
+        SizedBox(width: 16), // Padding to the right edge
+      ],
         bottom: TabBar(
           controller: _tabController,
           physics: NeverScrollableScrollPhysics(),

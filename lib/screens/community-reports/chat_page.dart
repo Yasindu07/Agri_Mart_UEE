@@ -44,7 +44,7 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
 
         if (userDoc.exists) {
           setState(() {
-            _username = userDoc.get('displayName') ?? 'Anonymous';
+            _username = userDoc.get('name') ?? 'Anonymous';
             _userProfileImage = userDoc.get('profilePicture') ??
                 'https://images.pexels.com/photos/2379003/pexels-photo-2379003.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
           });

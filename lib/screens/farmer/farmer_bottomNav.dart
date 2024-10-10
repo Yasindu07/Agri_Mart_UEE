@@ -77,7 +77,7 @@ class _BottomNavState extends State<BottomNav> {
             // Display the name above the icon if active
             if (isActive)
               Padding(
-                padding: const EdgeInsets.only(bottom: 4.0),
+                padding: const EdgeInsets.only(bottom: 9.0),
                 child: Text(
                   _tabNames[index],
                   style: TextStyle(
@@ -95,7 +95,7 @@ class _BottomNavState extends State<BottomNav> {
             ),
             // Label below the icon
             Padding(
-              padding: const EdgeInsets.only(top: 4.0),
+              padding: const EdgeInsets.only(top: 6.0),
               // child: Text(
               //   _tabNames[index],
               //   style: TextStyle(
