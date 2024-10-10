@@ -1,16 +1,9 @@
-
 import 'package:agro_mart/screens/community-reports/community_posts_page.dart';
-
-//import 'package:agro_mart/model/product_model.dart';
-import 'package:agro_mart/screens/buyer/buyer_commu.dart';
-
 import 'package:agro_mart/screens/buyer/buyer_home.dart';
 import 'package:agro_mart/screens/buyer/buyer_search.dart';
-import 'package:agro_mart/screens/buyer/cart_page.dart';
 import 'package:agro_mart/screens/buyer/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
-
 
 class BuyerBottomNav extends StatefulWidget {
   const BuyerBottomNav({super.key});
@@ -39,7 +32,6 @@ class _BuyerBottomNavState extends State<BuyerBottomNav> {
       icon: Icon(Icons.comment_bank_outlined),
       title: Text("Community"),
     ),
-    
     SalomonBottomBarItem(
       icon: Icon(Icons.person),
       title: Text("Profile"),
@@ -48,8 +40,9 @@ class _BuyerBottomNavState extends State<BuyerBottomNav> {
 
   final _screens = [
     const BuyerHomePage(),
-    BuyerSearch(),
-    CartPage(),
+    BuyerSearch(
+      userId: 'userId',
+    ),
     CommunityPostsPage(),
     const ProfilePage(),
   ];
