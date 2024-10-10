@@ -1,10 +1,11 @@
-import 'package:agro_mart/screens/buyer/buyer_commu.dart';
+import 'package:agro_mart/screens/community-reports/price_list_page.dart';
 import 'package:agro_mart/screens/buyer/buyer_home.dart';
 import 'package:agro_mart/screens/buyer/buyer_search.dart';
 import 'package:agro_mart/screens/buyer/cart_page.dart';
 import 'package:agro_mart/screens/buyer/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
+
 
 class BuyerBottomNav extends StatefulWidget {
   const BuyerBottomNav({super.key});
@@ -30,9 +31,10 @@ class _BuyerBottomNavState extends State<BuyerBottomNav> {
       title: Text("Cart"),
     ),
     SalomonBottomBarItem(
-      icon: Icon(Icons.comment_rounded),
-      title: Text("Community"),
+      icon: Icon(Icons.analytics),
+      title: Text("Price Details"),
     ),
+    
     SalomonBottomBarItem(
       icon: Icon(Icons.person),
       title: Text("Profile"),
@@ -43,7 +45,7 @@ class _BuyerBottomNavState extends State<BuyerBottomNav> {
     const BuyerHomePage(),
     const BuyerSearch(),
     CartPage(),
-    const CommunityPost(),
+    MarketTrendsScreen(),
     const ProfilePage(),
   ];
   @override

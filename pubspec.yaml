@@ -35,6 +35,9 @@ dependencies:
   cloud_firestore: ^5.2.1
   fluttertoast: ^8.2.6
   salomon_bottom_bar: ^3.3.2
+  intl: ^0.18.1
+  cached_network_image: ^3.1.0
+
 
 
   # The following adds the Cupertino Icons font to your application.
