@@ -9,7 +9,8 @@ import 'package:agro_mart/screens/farmer/farmerScreen/farmer_pendingOrder.dart';
 import 'package:agro_mart/screens/farmer/farmerScreen/farmer_profile.dart';
 
 class BottomNav extends StatefulWidget {
-  const BottomNav({super.key});
+  final int initialIndex;
+  BottomNav({super.key, this.initialIndex = 0});
 
   @override
   State<BottomNav> createState() => _BottomNavState();
@@ -17,6 +18,11 @@ class BottomNav extends StatefulWidget {
 
 class _BottomNavState extends State<BottomNav> {
   int _currentIndex = 0;
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex; // Initialize with the passed index
+  }
 
   final _items = [
     SalomonBottomBarItem(
@@ -50,7 +56,7 @@ class _BottomNavState extends State<BottomNav> {
     const FarmerHomePage(),
     const FarmerPendingOrder(),
     const FarmerCompleteOrder(),
-    const FarmerFaq(),
+    FarmerFaq(),
     const FarmerProfile(),
   ];
 

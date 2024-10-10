@@ -8,7 +8,8 @@ import 'package:agro_mart/services/auth_services.dart';
 import 'package:flutter/material.dart';
 
 class TransporterScreen extends StatefulWidget {
-  const TransporterScreen({super.key});
+  final int initialIndex;
+  const TransporterScreen({super.key, this.initialIndex = 0});
 
   @override
   State<TransporterScreen> createState() => _TransporterScreenState();
@@ -23,6 +24,12 @@ class _TransporterScreenState extends State<TransporterScreen> {
     DeliveryMapScreen(),
     TranspoterProfile(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex; // Initialize with the passed index
+  }
 
   void _onItemTapped(int index) {
     setState(() {

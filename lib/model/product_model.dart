@@ -38,14 +38,16 @@ class Product {
   factory Product.fromMap(Map<String, dynamic> map, String id) {
     return Product(
       id: id,
-      title: map['title'],
-      category: map['category'],
-      quantity: map['quantity'],
-      description: map['description'],
-      location: map['location'],
-      pricePerKg: map['pricePerKg'],
-      imageUrls: List<String>.from(map['imageUrls']),
-      userId: map['userId'], // Add this field
+      title: map['title'] ?? 'No Title', // Provide a default value
+      category: map['category'] ?? 'Uncategorized',
+      quantity: map['quantity'] ?? 0.0,
+      description: map['description'] ?? 'No Description',
+      location: map['location'] ?? 'Unknown Location',
+      pricePerKg: map['pricePerKg'] ?? 0.0,
+      imageUrls: List<String>.from(map['imageUrls'] ?? []), // Handle null
+      userId: map['userId'] ?? 'Unknown User', // Handle null
     );
   }
+
+  
 }

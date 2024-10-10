@@ -1,3 +1,4 @@
+import 'package:agro_mart/screens/transporter_screen.dart';
 import 'package:agro_mart/screens/transpoter/TranspoterOrders.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -111,7 +112,8 @@ class _OrderCompletescreenState extends State<OrderCompletescreen> {
                   Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => TranspoterOrder()));
+                          builder: (context) =>
+                              TransporterScreen(initialIndex: 1)));
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.primary,

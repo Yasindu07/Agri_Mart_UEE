@@ -1,4 +1,8 @@
+
 import 'package:agro_mart/screens/community-reports/price_list_page.dart';
+//import 'package:agro_mart/model/product_model.dart';
+import 'package:agro_mart/screens/buyer/buyer_commu.dart';
+
 import 'package:agro_mart/screens/buyer/buyer_home.dart';
 import 'package:agro_mart/screens/buyer/buyer_search.dart';
 import 'package:agro_mart/screens/buyer/cart_page.dart';
@@ -43,7 +47,7 @@ class _BuyerBottomNavState extends State<BuyerBottomNav> {
 
   final _screens = [
     const BuyerHomePage(),
-    const BuyerSearch(),
+    BuyerSearch(),
     CartPage(),
     MarketTrendsScreen(),
     const ProfilePage(),

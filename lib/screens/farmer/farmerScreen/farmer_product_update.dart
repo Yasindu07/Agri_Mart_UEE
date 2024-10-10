@@ -1,10 +1,8 @@
 import 'package:agro_mart/model/product_model.dart';
 import 'package:agro_mart/screens/farmer/farmerScreen/farmer_helper/image_helper.dart';
-import 'package:agro_mart/screens/farmer/farmerScreen/farmer_product_preview.dart';
 import 'package:agro_mart/screens/farmer/farmer_screen.dart';
 import 'package:agro_mart/services/location_service.dart';
 import 'package:agro_mart/services/product_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:io';
@@ -13,53 +11,65 @@ import 'package:geolocator/geolocator.dart';
 
 import 'dart:developer' as devtools;
 
-class FarmerProductAdd extends StatefulWidget {
-  const FarmerProductAdd({super.key});
+class FarmerProductUpdate extends StatefulWidget {
+  final Product product;
+  const FarmerProductUpdate({required this.product});
 
   @override
-  State<FarmerProductAdd> createState() => _FarmerProductAddState();
+  State<FarmerProductUpdate> createState() => _FarmerProductUpdateState();
 }
 
-class _FarmerProductAddState extends State<FarmerProductAdd> {
+class _FarmerProductUpdateState extends State<FarmerProductUpdate> {
   final ProductService _productService = ProductService();
+  late TextEditingController _titleController;
+  late TextEditingController _descriptionController;
+  late TextEditingController _priceController;
+  late TextEditingController _quantityController;
+  late TextEditingController _categoryController;
+
   final ImageService _imageService = ImageService();
 
   final List<File?> _images = List<File?>.filled(4, null);
   final LocationService _locationService = LocationService();
 
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
-  final TextEditingController _priceController = TextEditingController();
 
   int _titleLength = 0;
   int _descLength = 0;
 
   bool isLoading = false;
-  bool isPreviewEnabled = false;
 
   String? _selectedCategory;
 
   @override
   void initState() {
     super.initState();
-    _setCurrentLocation();
-    _titleController.addListener(_validateFields);
-    _descriptionController.addListener(_validateFields);
-    _quantityController.addListener(_validateFields);
-    _locationController.addListener(_validateFields);
-    _priceController.addListener(_validateFields);
+
+    // Initialize controllers first
+    _titleController = TextEditingController(text: widget.product.title);
+    _descriptionController =
+        TextEditingController(text: widget.product.description);
+    _priceController =
+        TextEditingController(text: widget.product.pricePerKg.toString());
+    _quantityController =
+        TextEditingController(text: widget.product.quantity.toString());
+    _categoryController = TextEditingController(text: widget.product.category);
+
+    // Then add listeners
     _titleController.addListener(() {
       setState(() {
         _titleLength = _titleController.text.length;
       });
     });
+
     _descriptionController.addListener(() {
       setState(() {
         _descLength = _descriptionController.text.length;
       });
     });
+
+    // Set the current location
+    _setCurrentLocation();
   }
 
   @override
@@ -67,72 +77,61 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
     // TODO: implement dispose
     _titleController.dispose();
     _descriptionController.dispose();
-    _quantityController.dispose();
-    _locationController.dispose();
     _priceController.dispose();
+    _quantityController.dispose();
+    _categoryController.dispose();
     super.dispose();
   }
 
-  // Function to validate all input fields and update the preview button state
-  void _validateFields() {
-    setState(() {
-      isPreviewEnabled = _titleController.text.isNotEmpty &&
-          _descriptionController.text.isNotEmpty &&
-          _quantityController.text.isNotEmpty &&
-          _locationController.text.isNotEmpty &&
-          _priceController.text.isNotEmpty &&
-          _selectedCategory != null &&
-          _images.any((image) => image != null);
-    });
-  }
+  void _updateProduct() async {
+    if (_titleController.text.isEmpty ||
+        _descriptionController.text.isEmpty ||
+        _priceController.text.isEmpty ||
+        _quantityController.text.isEmpty ||
+        _locationController.text.isEmpty ||
+        _selectedCategory == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please fill all the fields'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
-  Future<void> _submitProduct(BuildContext context) async {
     setState(() {
       isLoading = true;
     });
+
+    // Upload all images at once and get the list of image URLs
+    List<String> imageUrls = await _imageService.uploadImages(_images);
+
+    Product product = Product(
+      id: widget.product.id,
+      title: _titleController.text,
+      category: _selectedCategory!,
+      quantity: double.parse(_quantityController.text),
+      description: _descriptionController.text,
+      location: _locationController.text,
+      pricePerKg: double.parse(_priceController.text),
+      imageUrls: imageUrls,
+      userId: widget.product.userId,
+    );
+
     try {
-      // First, upload images to Firebase Storage and get the URLs
-      List<String> imageUrls = await _imageService.uploadImages(_images);
-
-      // Get the current user's ID
-      final userId = FirebaseAuth.instance.currentUser?.uid;
-      if (userId == null) {
-        throw Exception('User not logged in');
-      }
-
-      // Then create the product object with the image URLs and user ID
-      Product product = Product(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        title: _titleController.text,
-        category: _selectedCategory ?? 'Unknown',
-        quantity: double.parse(_quantityController.text),
-        description: _descriptionController.text,
-        location: _locationController.text,
-        pricePerKg: double.parse(_priceController.text),
-        imageUrls: imageUrls,
-        userId: userId, // Pass the user ID here
-      );
-
-      // Save product to Firestore
-      await _productService.addProduct(product);
-
-      devtools.log('Product Added successfully with ID: ${product.id}');
-
+      await _productService.updateProduct(product);
       Fluttertoast.showToast(
-        msg: "Product added successfully",
+        msg: "Product Updated successfully",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Theme.of(context).colorScheme.onPrimary,
         textColor: Colors.white,
         fontSize: 16.0,
       );
-
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => FarmerScreen(initialIndex: 0)),
       );
-
-      _clearForm();
     } catch (e) {
       devtools.log('Error adding product: $e');
       Fluttertoast.showToast(
@@ -150,19 +149,6 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
     }
   }
 
-  void _clearForm() {
-    _titleController.clear();
-    _descriptionController.clear();
-    _quantityController.clear();
-    _priceController.clear();
-    _locationController.clear();
-    setState(() {
-      _images.fillRange(0, 4, null);
-      _selectedCategory = null;
-      isPreviewEnabled = false;
-    });
-  }
-
   // Function to pick an image from the gallery using ImageService
   Future<void> _pickImage() async {
     final image = await _imageService.pickImageFromGallery();
@@ -172,7 +158,6 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
         if (index != -1) {
           _images[index] = image;
         }
-        _validateFields();
       });
     }
   }
@@ -186,7 +171,6 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
         if (index != -1) {
           _images[index] = image;
         }
-        _validateFields();
       });
     }
   }
@@ -194,7 +178,6 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
   void _removeImage(int index) {
     setState(() {
       _images[index] = null;
-      _validateFields();
     });
   }
 
@@ -208,7 +191,6 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
           _locationController.text =
               address; // Set the fetched address to the text field
         });
-        _validateFields();
       }
     } catch (e) {
       print('Error fetching location: $e');
@@ -223,26 +205,23 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
 
     return Scaffold(
       appBar: AppBar(
+        elevation: 1,
         backgroundColor: Colors.white,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Add Product',
-              style: GoogleFonts.poppins(
-                fontSize: screenWidth * 0.06,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            Text(
-              'step 1/2',
-              style: GoogleFonts.poppins(
-                fontSize: screenWidth * 0.04,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-          ],
+        title: Text(
+          'Update Product',
+          style: GoogleFonts.poppins(
+            fontSize: screenWidth * 0.055,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => FarmerScreen(initialIndex: 0))),
         ),
       ),
       body: Padding(
@@ -409,9 +388,9 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
               // Enter Description
               TextField(
                 controller: _descriptionController,
+                maxLength: 200,
                 minLines: 4,
                 maxLines: null,
-                maxLength: 200,
                 decoration: InputDecoration(
                   labelText: 'Enter Description',
                   border: OutlineInputBorder(
@@ -487,94 +466,53 @@ class _FarmerProductAddState extends State<FarmerProductAdd> {
               ),
               SizedBox(height: screenHeight * 0.03),
               // Next Button
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    width: screenWidth * 0.40,
-                    height: screenHeight * 0.055,
-                    child: ElevatedButton(
-                      onPressed: () => _submitProduct(context),
-                      child: isLoading
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'submiting...',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: screenWidth * 0.03,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
+                  Center(
+                    child: SizedBox(
+                      width: screenWidth * 0.40,
+                      height: screenHeight * 0.055,
+                      child: ElevatedButton(
+                        onPressed: () => _updateProduct(),
+                        child: isLoading
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'updating...',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: screenWidth * 0.03,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(width: screenWidth * 0.02),
-                                SizedBox(
-                                  height: screenHeight * 0.03,
-                                  width: screenHeight * 0.03,
-                                  child: CircularProgressIndicator(
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                    strokeWidth: screenWidth * 0.010,
+                                  SizedBox(width: screenWidth * 0.02),
+                                  SizedBox(
+                                    height: screenHeight * 0.03,
+                                    width: screenHeight * 0.03,
+                                    child: CircularProgressIndicator(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                      strokeWidth: screenWidth * 0.010,
+                                    ),
                                   ),
+                                ],
+                              )
+                            : Text(
+                                'Update',
+                                style: GoogleFonts.poppins(
+                                  fontSize: screenWidth * 0.04,
+                                  color: Theme.of(context).colorScheme.surface,
+                                  fontWeight: FontWeight.w600,
                                 ),
-                              ],
-                            )
-                          : Text(
-                              'Submit',
-                              style: GoogleFonts.poppins(
-                                fontSize: screenWidth * 0.04,
-                                color: Theme.of(context).colorScheme.surface,
-                                fontWeight: FontWeight.w600,
                               ),
-                            ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(80),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Spacer(),
-                  SizedBox(
-                    width: screenWidth * 0.40,
-                    height: screenHeight * 0.055,
-                    child: ElevatedButton(
-                      onPressed: isPreviewEnabled
-                          ? () {
-                              // Navigate to the preview page with all the data
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ProductPreviewPage(
-                                    title: _titleController.text,
-                                    category: _selectedCategory ?? 'Unknown',
-                                    quantity:
-                                        double.parse(_quantityController.text),
-                                    description: _descriptionController.text,
-                                    location: _locationController.text,
-                                    pricePerKg:
-                                        double.parse(_priceController.text),
-                                    images: _images,
-                                  ),
-                                ),
-                              );
-                            }
-                          : null, // Disable button if preview is not enabled
-                      child: Text(
-                        'Preview',
-                        style: GoogleFonts.poppins(
-                          fontSize: screenWidth * 0.04,
-                          color: Theme.of(context).colorScheme.surface,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: isPreviewEnabled
-                            ? Theme.of(context).colorScheme.primary
-                            : Colors.grey, // Change color based on state
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(80),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.amber,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(80),
+                          ),
                         ),
                       ),
                     ),
