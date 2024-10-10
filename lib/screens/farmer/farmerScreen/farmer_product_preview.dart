@@ -94,7 +94,6 @@ class _ProductPreviewPageState extends State<ProductPreviewPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Wrap the title in Flexible to allow it to wrap or scale
                     Flexible(
                       child: Text(
                         widget.title,
@@ -104,19 +103,13 @@ class _ProductPreviewPageState extends State<ProductPreviewPage> {
                           color: Colors.black,
                         ),
                         softWrap: true,
-                        maxLines: 2, // Adjust as needed
-                        overflow: TextOverflow
-                            .ellipsis, // Add ellipsis if it overflows
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-
-                    SizedBox(
-                        width: screenWidth *
-                            0.02), // Add some space between title and price if needed
-
-                    // Use Flexible or Expanded for the price as well
+                    SizedBox(width: screenWidth * 0.02),
                     Text(
-                      '${widget.pricePerKg} Rs\n1 Kg', // Line break after the price
+                      '${widget.pricePerKg} Rs\n1 Kg',
                       style: GoogleFonts.poppins(
                         fontSize: 24,
                         fontWeight: FontWeight.w400,

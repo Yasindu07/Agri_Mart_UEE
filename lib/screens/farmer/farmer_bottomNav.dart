@@ -56,7 +56,7 @@ class _BottomNavState extends State<BottomNav> {
     const FarmerHomePage(),
     const FarmerPendingOrder(),
     const FarmerCompleteOrder(),
-    const FarmerFaq(),
+    FarmerFaq(),
     const FarmerProfile(),
   ];
 

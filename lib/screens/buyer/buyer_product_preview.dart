@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:agro_mart/model/product_model.dart';
-import 'order_summery_page.dart';
 import 'cart_page.dart';
 
 class BuyerProductPreviewPage extends StatefulWidget {
@@ -286,6 +285,15 @@ class _BuyerProductPreviewPageState extends State<BuyerProductPreviewPage> {
                 ),
               ),
               SizedBox(height: screenHeight * 0.02),
+              Text(
+                'Shipping Details :',
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black,
+                ),
+              ),
+              SizedBox(height: screenHeight * 0.01),
 
               // Radio buttons for Pick up and Delivery
               Row(
@@ -375,7 +383,7 @@ class _BuyerProductPreviewPageState extends State<BuyerProductPreviewPage> {
                     );
                   },
                   child: Text(
-                    'Checkout',
+                    'Add To Cart',
                     style: GoogleFonts.poppins(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
