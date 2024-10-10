@@ -1,4 +1,5 @@
 import 'package:agro_mart/screens/community-reports/price_reports.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -15,43 +16,46 @@ class _MarketTrendsScreenState extends State<MarketTrendsScreen> with SingleTick
   bool isSearching = false;
   int currentPage = 1;
   int itemsPerPage = 5; // Changed to show 5 items per page
+  late Stream<QuerySnapshot> itemsStream;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _initializeItems();
-    _pageItems();
+    itemsStream = FirebaseFirestore.instance.collection('market_items').snapshots();
+    _fetchItems();
   }
 
-  void _initializeItems() {
-    allItems = [
-      {'name': 'කැරට් (Carrot)', 'priceRange': 'LKR 100 - LKR 120/kg', 'image': 'https://media.istockphoto.com/id/1388403435/photo/fresh-carrots-isolated-on-white-background.jpg?s=1024x1024&w=is&k=20&c=AZlR713OB95BftaWVrKHOLKcbX1VYSWBHfGs1C6_nj8='},
-      {'name': 'තක්කාලි (Tomato)', 'priceRange': 'LKR 140 - LKR 150/kg', 'image': 'https://media.istockphoto.com/id/1419141035/photo/cut-red-tomato-close-up-in-a-box.jpg?s=1024x1024&w=is&k=20&c=7hFDTPOrPIaTARip38viDm1OJVc0-s_ojYPFnFuHt1o='},
-      {'name': 'ගෝවා (Cabbage)', 'priceRange': 'LKR 90 - LKR 100/kg', 'image': 'https://media.istockphoto.com/id/673162168/photo/green-cabbage-isolated-on-white.jpg?s=1024x1024&w=is&k=20&c=wMuOWwv0uCep8fwcF4utoe9ZAnespfG8AyWgXDGAwA8='},
-      {'name': 'වට්ටක්කා (Pumpkin)', 'priceRange': 'LKR 70 - LKR 80/kg', 'image': 'https://media.istockphoto.com/id/1426570114/photo/pumpkins-fall-season.jpg?s=1024x1024&w=is&k=20&c=y7ebyTBZpCg7RC4_rJTtv2jdOhitWsFGDkJcZtrhWBE='},
-      {'name': 'බෝංචි (Beans)', 'priceRange': 'LKR 180 - LKR 200/kg', 'image': 'https://media.istockphoto.com/id/182051238/photo/green-beans.jpg?s=1024x1024&w=is&k=20&c=T0h_1vawyJPchpbnsJwnYOgyTMUeHznR-Wl5uKT_Fcg='},
-      {'name': 'වම්බටු (Eggplant)', 'priceRange': 'LKR 170 - LKR 180/kg', 'image': 'https://media.istockphoto.com/id/1490653391/photo/eggplants.jpg?s=1024x1024&w=is&k=20&c=7JTAnI-NsbyG3aoI8oUeudK6uP8sK1JpP6K20rJYfWs='},
-      {'name': 'අල (Potato)', 'priceRange': 'LKR 150 - LKR 160/kg', 'image': 'https://media.istockphoto.com/id/1408413704/photo/natural-potatoes-on-the-farmers-market-stall.jpg?s=1024x1024&w=is&k=20&c=KFX_qT3kMexZLdXd12-azBgX0s2ix4qjUGP_sHaYmmE='},
-      {'name': 'ලූණු (Onion)', 'priceRange': 'LKR 130 - LKR 140/kg', 'image': 'https://media.istockphoto.com/id/182504322/photo/red-and-gold-onion.jpg?s=1024x1024&w=is&k=20&c=FTIXALREn2Ea3SjIU1pf1X1xhqX9MXATlh9AuyhznpI='},
-      {'name': 'වට්ටක්කා (Pumpkin)', 'priceRange': 'LKR 70 - LKR 80/kg', 'image': 'https://media.istockphoto.com/id/1426570114/photo/pumpkins-fall-season.jpg?s=1024x1024&w=is&k=20&c=y7ebyTBZpCg7RC4_rJTtv2jdOhitWsFGDkJcZtrhWBE='},
-      {'name': 'බෝංචි (Beans)', 'priceRange': 'LKR 180 - LKR 200/kg', 'image': 'https://media.istockphoto.com/id/182051238/photo/green-beans.jpg?s=1024x1024&w=is&k=20&c=T0h_1vawyJPchpbnsJwnYOgyTMUeHznR-Wl5uKT_Fcg='},
-      {'name': 'වම්බටු (Eggplant)', 'priceRange': 'LKR 170 - LKR 180/kg', 'image': 'https://media.istockphoto.com/id/1490653391/photo/eggplants.jpg?s=1024x1024&w=is&k=20&c=7JTAnI-NsbyG3aoI8oUeudK6uP8sK1JpP6K20rJYfWs='},
-      {'name': 'වට්ටක්කා (Pumpkin)', 'priceRange': 'LKR 70 - LKR 80/kg', 'image': 'https://media.istockphoto.com/id/1426570114/photo/pumpkins-fall-season.jpg?s=1024x1024&w=is&k=20&c=y7ebyTBZpCg7RC4_rJTtv2jdOhitWsFGDkJcZtrhWBE='},
-      {'name': 'බෝංචි (Beans)', 'priceRange': 'LKR 180 - LKR 200/kg', 'image': 'https://media.istockphoto.com/id/182051238/photo/green-beans.jpg?s=1024x1024&w=is&k=20&c=T0h_1vawyJPchpbnsJwnYOgyTMUeHznR-Wl5uKT_Fcg='},
-      {'name': 'වම්බටු (Eggplant)', 'priceRange': 'LKR 170 - LKR 180/kg', 'image': 'https://media.istockphoto.com/id/1490653391/photo/eggplants.jpg?s=1024x1024&w=is&k=20&c=7JTAnI-NsbyG3aoI8oUeudK6uP8sK1JpP6K20rJYfWs='},
-      {'name': 'වට්ටක්කා (Pumpkin)', 'priceRange': 'LKR 70 - LKR 80/kg', 'image': 'https://media.istockphoto.com/id/1426570114/photo/pumpkins-fall-season.jpg?s=1024x1024&w=is&k=20&c=y7ebyTBZpCg7RC4_rJTtv2jdOhitWsFGDkJcZtrhWBE='},
-      {'name': 'බෝංචි (Beans)', 'priceRange': 'LKR 180 - LKR 200/kg', 'image': 'https://media.istockphoto.com/id/182051238/photo/green-beans.jpg?s=1024x1024&w=is&k=20&c=T0h_1vawyJPchpbnsJwnYOgyTMUeHznR-Wl5uKT_Fcg='},
-      {'name': 'වම්බටු (Eggplant)', 'priceRange': 'LKR 170 - LKR 180/kg', 'image': 'https://media.istockphoto.com/id/1490653391/photo/eggplants.jpg?s=1024x1024&w=is&k=20&c=7JTAnI-NsbyG3aoI8oUeudK6uP8sK1JpP6K20rJYfWs='},
-    ];
+  void _fetchItems() {
+    itemsStream.listen(
+      (snapshot) {
+        setState(() {
+          allItems = snapshot.docs.map((doc) {
+            return {
+              'name': doc['name'],
+              'priceRange': doc['priceRange'],
+              'image': doc['image'],
+            };
+          }).toList();
+          _pageItems();
+        });
+      },
+      onError: (error) {
+        // Handle errors appropriately
+        print('Error fetching items: $error');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load items')),
+        );
+      },
+    );
   }
 
   void _searchItems() {
-    String query = _searchController.text;
+    String query = _searchController.text.trim().toLowerCase();
     setState(() {
       if (query.isNotEmpty) {
         displayedItems = allItems.where((item) {
-          return item['name'].toString().toLowerCase().contains(query.toLowerCase());
+          return item['name'].toString().toLowerCase().contains(query);
         }).toList();
         isSearching = true;
       } else {
@@ -65,7 +69,14 @@ class _MarketTrendsScreenState extends State<MarketTrendsScreen> with SingleTick
     setState(() {
       int startIndex = (currentPage - 1) * itemsPerPage;
       int endIndex = startIndex + itemsPerPage;
-      displayedItems = allItems.sublist(startIndex, endIndex.clamp(0, allItems.length));
+      if (startIndex >= allItems.length) {
+        startIndex = 0;
+        currentPage = 1;
+      }
+      displayedItems = allItems.sublist(
+        startIndex,
+        endIndex.clamp(0, allItems.length),
+      );
       isSearching = false;
     });
   }
@@ -111,7 +122,7 @@ class _MarketTrendsScreenState extends State<MarketTrendsScreen> with SingleTick
         ),
         backgroundColor: Colors.white,
         elevation: 0,
-         centerTitle: true,
+        centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -124,148 +135,145 @@ class _MarketTrendsScreenState extends State<MarketTrendsScreen> with SingleTick
           ),
           SizedBox(width: 16),
         ],
-
-
-        
-
         bottom: TabBar(
           controller: _tabController,
           physics: NeverScrollableScrollPhysics(),
-          indicatorColor:Color(0xFF055A2F),
-          indicatorPadding: EdgeInsets.symmetric(horizontal: 1), 
+          indicatorColor: Color(0xFF055A2F),
+          indicatorPadding: EdgeInsets.symmetric(horizontal: 1),
           onTap: (index) {
             setState(() {});
           },
           tabs: [
             Tab(
-              icon: Icon(Icons.bar_chart, color: _tabController.index == 0 ? Color(0xFF089F4D): Colors.grey),
+              icon: Icon(Icons.bar_chart, color: _tabController.index == 0 ? Color(0xFF089F4D) : Colors.grey),
               text: "Market Trends",
             ),
             Tab(
-              icon: Icon(Icons.insert_chart_outlined, color: _tabController.index == 1 ?  Color(0xFF089F4D) : Colors.grey),
+              icon: Icon(Icons.insert_chart_outlined, color: _tabController.index == 1 ? Color(0xFF089F4D) : Colors.grey),
               text: "Price Reports",
             ),
           ],
         ),
-
-
-
       ),
-
-      
       body: Column(
-      children: [
-        if (_tabController.index == 0)
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '  Average Prices',
-                  style: TextStyle(
-                    fontSize: 20,
-                    
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF055A2F),
+        children: [
+          if (_tabController.index == 0)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '  Average Prices',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF055A2F),
+                    ),
                   ),
-                  
-                ),
-                SizedBox(height: 8), // Add space between the topic and search bar
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _searchController,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          labelText: 'Search...',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide(color: Colors.green, width: 1.5),
-                          ),
-                          suffixIcon: IconButton(
-                            icon: Icon(Icons.search),
-                            onPressed: _searchItems,
+                  SizedBox(height: 8), // Add space between the topic and search bar
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          onChanged: (value) {
+                            // Optional: Implement real-time search
+                            //_searchItems();
+                          },
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            labelText: 'Search...',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(color: Colors.green, width: 1.5),
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(Icons.search),
+                              onPressed: _searchItems,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: <Widget>[
+                buildPriceList(),
+                PriceReportsPage(),
               ],
             ),
           ),
-        Expanded(
-          child: TabBarView(
-            controller: _tabController,
-            children: <Widget>[
-              buildPriceList(),
-              PriceReportsPage(),
-            ],
-          ),
-        ),
           if (_tabController.index == 0 && !isSearching)
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                Container(
-  width: 26, // Fixed width
-  height: 24, // Fixed height      D1E655
-  decoration: BoxDecoration(
-    color: Color(0xFFD1E655),// Set the yellow background color
-    shape: BoxShape.rectangle,
-    borderRadius: BorderRadius.circular(10), // Rounded corners with a radius of 10
-  ),
-  child: IconButton(
-    icon: Icon(Icons.navigate_before_outlined),
-    onPressed: _previousPage,
-    color: currentPage > 1 ? const Color.fromARGB(255, 0, 0, 0) : Colors.grey,
-    iconSize: 16, // Reduced icon size to fit within the fixed width and height
-    splashColor: Color(0xFFD1E655), // Splash color on click
-    highlightColor: Color(0xFFD1E655), // Highlight color on click
-    padding: EdgeInsets.zero, // Remove extra padding
-  ),
-),
+                  Container(
+                    width: 26, // Fixed width
+                    height: 24, // Fixed height
+                    decoration: BoxDecoration(
+                      color: Color(0xFFD1E655), // Set the yellow background color
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(10), // Rounded corners with a radius of 10
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.navigate_before_outlined),
+                      onPressed: _previousPage,
+                      color: currentPage > 1 ? Colors.black : Colors.grey,
+                      iconSize: 16, // Reduced icon size to fit within the fixed width and height
+                      splashColor: Color(0xFFD1E655), // Splash color on click
+                      highlightColor: Color(0xFFD1E655), // Highlight color on click
+                      padding: EdgeInsets.zero, // Remove extra padding
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: Text('$currentPage of $totalPages', style: TextStyle(color: Colors.black)),
                   ),
-
-
-
                   Container(
-  width: 26, // Fixed width
-  height: 24, // Fixed height
-  decoration: BoxDecoration(
-    color:Color(0xFFD1E655), // Set the yellow background color
-    shape: BoxShape.rectangle,
-    borderRadius: BorderRadius.circular(10), // Rounded corners with a radius of 10
-  ),
-  child: IconButton(
-    icon: Icon(Icons.navigate_next_outlined),
-    onPressed: _nextPage,
-    color: currentPage * itemsPerPage < allItems.length ? const Color.fromARGB(255, 0, 0, 0) : Colors.grey,
-    iconSize: 16, // Reduced icon size to fit within the fixed width and height
-    splashColor: Color(0xFFD1E655), // Splash color on click
-    highlightColor: Color(0xFFD1E655), // Highlight color on click
-    padding: EdgeInsets.zero, // Remove extra padding
-  ),
-),
+                    width: 26, // Fixed width
+                    height: 24, // Fixed height
+                    decoration: BoxDecoration(
+                      color: Color(0xFFD1E655), // Set the yellow background color
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(10), // Rounded corners with a radius of 10
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.navigate_next_outlined),
+                      onPressed: _nextPage,
+                      color: currentPage * itemsPerPage < allItems.length ? Colors.black : Colors.grey,
+                      iconSize: 16, // Reduced icon size to fit within the fixed width and height
+                      splashColor: Color(0xFFD1E655), // Splash color on click
+                      highlightColor: Color(0xFFD1E655), // Highlight color on click
+                      padding: EdgeInsets.zero, // Remove extra padding
+                    ),
+                  ),
                 ],
               ),
             ),
-       
-
- ],
+        ],
       ),
     );
   }
 
   Widget buildPriceList() {
+    if (displayedItems.isEmpty) {
+      return Center(
+        child: Text(
+          'No items found.',
+          style: TextStyle(fontSize: 16, color: Colors.grey),
+        ),
+      );
+    }
+
     return ListView.builder(
       itemCount: displayedItems.length,
       itemBuilder: (context, index) {
@@ -296,23 +304,30 @@ class _MarketTrendsScreenState extends State<MarketTrendsScreen> with SingleTick
                   ),
                 ),
                 Expanded(
-  flex: 1,
-  child: Container(
-    height: 70,
-    width: 70,
-    decoration: BoxDecoration(
-      border: Border.all(color: const Color.fromARGB(255, 118, 191, 120), width: 2),
-      borderRadius: BorderRadius.circular(10), // Adds rounded corners
-    ),
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(10), // Ensures the image fits the rounded corners
-      child: Image.network(
-        item['image'],
-        fit: BoxFit.cover,
-      ),
-    ),
-  ),
-),
+                  flex: 1,
+                  child: Container(
+                    height: 70,
+                    width: 70,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Color.fromARGB(255, 118, 191, 120), width: 2),
+                      borderRadius: BorderRadius.circular(10), // Adds rounded corners
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10), // Ensures the image fits the rounded corners
+                      child: Image.network(
+                        item['image'],
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(Icons.broken_image, color: Colors.grey);
+                        },
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(child: CircularProgressIndicator());
+                        },
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
