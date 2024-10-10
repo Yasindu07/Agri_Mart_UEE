@@ -1,4 +1,4 @@
-import 'package:agro_mart/screens/community-reports/community_posts_page.dart';
+import 'package:agro_mart/screens/community-reports/buyer_community_post_page.dart';
 import 'package:agro_mart/screens/buyer/buyer_home.dart';
 import 'package:agro_mart/screens/buyer/buyer_search.dart';
 import 'package:agro_mart/screens/buyer/profile_page.dart';

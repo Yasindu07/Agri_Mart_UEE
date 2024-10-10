@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'package:agro_mart/screens/community-reports/edit_post.dart';
 import 'package:agro_mart/screens/login_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 //import 'add_location_page.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -159,7 +161,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               _buildProfileInfo(
                                   context, name, email, address, phoneNo),
                               const SizedBox(height: 20),
-                              // _buildAddLocationButton(context),
+                              _buildNavigationButtons(),
                               const SizedBox(height: 20),
                               _buildEditProfileButton(),
                               const SizedBox(height: 30),
@@ -395,6 +397,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
             ),
+
+            
             actions: <Widget>[
               TextButton(
                 onPressed: () {
@@ -406,6 +410,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 child: const Text('Cancel'),
               ),
+
+          
               TextButton(
                 onPressed: () {
                   _saveUserData(); // Save the data and close the dialog
@@ -442,8 +448,33 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
+    /// Builds the navigation buttons
+  Widget _buildNavigationButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        ElevatedButton.icon(
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => EditDeletePostPage()));
+          },
+          icon: Icon(Icons.post_add),
+          label: Text('My Posts'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor:
+                const Color.fromARGB(255, 235, 233, 233), // Background color
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            textStyle: GoogleFonts.poppins(fontSize: 16, color: Colors.white),
+          ),
+        ),
+        
+      ],
+    );
+  }
 
   Widget _buildLogoutButton(BuildContext context) {
+
+    
     return ElevatedButton(
       onPressed: () async {
         await FirebaseAuth.instance.signOut();
