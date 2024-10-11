@@ -6,6 +6,8 @@ class OrderModel {
   double totalAmount;
   String shippingAddress;
   String paymentMethod;
+  String username;
+  String phone;
   DateTime orderDate;
 
   OrderModel({
@@ -14,6 +16,8 @@ class OrderModel {
     required this.totalAmount,
     required this.shippingAddress,
     required this.paymentMethod,
+    required this.username,
+    required this.phone,
     required this.orderDate,
   });
 
@@ -24,6 +28,8 @@ class OrderModel {
       'totalAmount': totalAmount,
       'shippingAddress': shippingAddress,
       'paymentMethod': paymentMethod,
+      'username': username,
+      'phone': phone,
       'orderDate': Timestamp.fromDate(orderDate),
     };
   }
@@ -35,6 +41,8 @@ class OrderModel {
       totalAmount: map['totalAmount']?.toDouble() ?? 0.0,
       shippingAddress: map['shippingAddress'] ?? '',
       paymentMethod: map['paymentMethod'] ?? '',
+      username: map['username'] ?? '',
+      phone: map['phone'] ?? '',
       orderDate: map['orderDate'] is Timestamp
           ? (map['orderDate'] as Timestamp).toDate()
           : DateTime.parse(map['orderDate']),

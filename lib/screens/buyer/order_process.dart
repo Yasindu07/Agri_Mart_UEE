@@ -23,6 +23,8 @@ class OrderProcessPage extends StatefulWidget {
 class _OrderProcessPageState extends State<OrderProcessPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
   String _paymentMethod =
       'Visa'; // Ensure this corresponds to actual values in the RadioListTile
 
@@ -67,6 +69,8 @@ class _OrderProcessPageState extends State<OrderProcessPage> {
           totalAmount: widget.totalAmount,
           shippingAddress: _locationController.text,
           paymentMethod: _paymentMethod,
+          username: _nameController.text,
+          phone: _phoneController.text,
           orderDate: DateTime.now(),
         );
 
@@ -106,6 +110,38 @@ class _OrderProcessPageState extends State<OrderProcessPage> {
                 controller: _locationController,
                 decoration: InputDecoration(
                   labelText: 'Items Location',
+                  prefixIcon: Icon(Icons.location_on,
+                      size: 20, color: Theme.of(context).colorScheme.primary),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15)),
+                  labelStyle:
+                      GoogleFonts.poppins(fontSize: 20, color: Colors.black),
+                ),
+              ),
+              SizedBox(height: 20),
+              Text('Name',
+                  style: GoogleFonts.poppins(
+                      fontSize: 20, fontWeight: FontWeight.bold)),
+              TextField(
+                controller: _nameController,
+                decoration: InputDecoration(
+                  labelText: 'Name',
+                  prefixIcon: Icon(Icons.location_on,
+                      size: 20, color: Theme.of(context).colorScheme.primary),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15)),
+                  labelStyle:
+                      GoogleFonts.poppins(fontSize: 20, color: Colors.black),
+                ),
+              ),
+              SizedBox(height: 20),
+              Text('Phone',
+                  style: GoogleFonts.poppins(
+                      fontSize: 20, fontWeight: FontWeight.bold)),
+              TextField(
+                controller: _phoneController,
+                decoration: InputDecoration(
+                  labelText: 'Phone',
                   prefixIcon: Icon(Icons.location_on,
                       size: 20, color: Theme.of(context).colorScheme.primary),
                   border: OutlineInputBorder(

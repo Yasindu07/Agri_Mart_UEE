@@ -1,4 +1,5 @@
 import 'package:agro_mart/model/order_model.dart';
+import 'package:agro_mart/model/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -63,5 +64,37 @@ class OrderService {
             .map(
                 (doc) => OrderModel.fromMap(doc.data() as Map<String, dynamic>))
             .toList());
+  }
+
+  // Stream to get all orders with user information
+  Stream<List<Map<String, dynamic>>> getAllOrdersWithUserData() {
+    return _firestore
+        .collection('orders')
+        .snapshots()
+        .asyncMap((snapshot) async {
+      List<Map<String, dynamic>> orderList = [];
+
+      try {
+        for (var doc in snapshot.docs) {
+          final orderData = doc.data();
+          print('Order raw data: $orderData');
+
+          if (orderData['userId'] is! String) {
+            throw Exception(
+                'Invalid userId type, expected String but found ${orderData['userId'].runtimeType}');
+          }
+
+          OrderModel order = OrderModel.fromMap(orderData);
+          orderList.add({
+            'order': order,
+          });
+        }
+      } catch (e) {
+        print('Error fetching orders with user data: $e');
+        throw Exception('Error fetching orders');
+      }
+
+      return orderList;
+    });
   }
 }
