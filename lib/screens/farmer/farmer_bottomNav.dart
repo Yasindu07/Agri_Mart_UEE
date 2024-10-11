@@ -52,11 +52,11 @@ class _BottomNavState extends State<BottomNav> {
   // Define screens
   final List<Widget> _screens = [
     const FarmerHomePage(),
-    const FarmerPendingOrder(),
+    FarmerPendingOrder(),
     const FarmerCompleteOrder(),
     FarmerFaq(),
-     CommunityPostsPage(),
-     MarketTrendsScreen(),
+    CommunityPostsPage(),
+    MarketTrendsScreen(),
   ];
 
   // Function to build each navigation item

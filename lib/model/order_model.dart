@@ -1,12 +1,14 @@
-class Order {
-  final String userId;
-  final List<Map<String, dynamic>> cartItems; // List of cart item maps
-  final double totalAmount;
-  final String shippingAddress;
-  final String paymentMethod;
-  final DateTime orderDate;
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-  Order({
+class OrderModel {
+  String userId;
+  List<Map<String, dynamic>> cartItems;
+  double totalAmount;
+  String shippingAddress;
+  String paymentMethod;
+  DateTime orderDate;
+
+  OrderModel({
     required this.userId,
     required this.cartItems,
     required this.totalAmount,
@@ -22,19 +24,20 @@ class Order {
       'totalAmount': totalAmount,
       'shippingAddress': shippingAddress,
       'paymentMethod': paymentMethod,
-      'orderDate': orderDate.toIso8601String(),
+      'orderDate': Timestamp.fromDate(orderDate),
     };
   }
 
-  // You can also create a fromMap method if needed to retrieve orders from Firestore
-  factory Order.fromMap(Map<String, dynamic> map) {
-    return Order(
-      userId: map['userId'],
+  factory OrderModel.fromMap(Map<String, dynamic> map) {
+    return OrderModel(
+      userId: map['userId'] ?? '',
       cartItems: List<Map<String, dynamic>>.from(map['cartItems']),
-      totalAmount: map['totalAmount'],
-      shippingAddress: map['shippingAddress'],
-      paymentMethod: map['paymentMethod'],
-      orderDate: DateTime.parse(map['orderDate']),
+      totalAmount: map['totalAmount']?.toDouble() ?? 0.0,
+      shippingAddress: map['shippingAddress'] ?? '',
+      paymentMethod: map['paymentMethod'] ?? '',
+      orderDate: map['orderDate'] is Timestamp
+          ? (map['orderDate'] as Timestamp).toDate()
+          : DateTime.parse(map['orderDate']),
     );
   }
 }
