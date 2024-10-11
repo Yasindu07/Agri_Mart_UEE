@@ -1,8 +1,11 @@
+import 'package:agro_mart/model/order_model.dart';
+import 'package:agro_mart/model/user_model.dart';
+import 'package:agro_mart/screens/transpoter/DeliveryMapScreen.dart';
+import 'package:agro_mart/services/order_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:agro_mart/services/location_service.dart';
-import 'package:agro_mart/screens/transpoter/DeliveryMapScreen.dart';
 import 'package:agro_mart/screens/transporter_screen.dart';
 
 class TranspoterHome extends StatefulWidget {
@@ -13,6 +16,7 @@ class TranspoterHome extends StatefulWidget {
 }
 
 class _TranspoterHomeState extends State<TranspoterHome> {
+  final OrderService _orderService = OrderService();
   String _currentAddress = "Fetching location...";
   Position? _currentPosition;
   final LocationService _locationService = LocationService();
@@ -140,24 +144,58 @@ class _TranspoterHomeState extends State<TranspoterHome> {
             const SizedBox(height: 16),
 
             // Scrollable list of cards
+            // Stream of orders and user data
             Expanded(
-              child: ListView.builder(
-                itemCount:
-                    cardData.length, // Number of cards you want to display
-                itemBuilder: (context, index) {
-                  final data = cardData[index]; // Fetch the current card data
-                  return ProductCard(
-                    name: data['name']!,
-                    package: data['package']!,
-                    quantity: data['quantity']!,
-                    startLocation: data['startLocation']!,
-                    destination: data['destination']!,
-                    price: data['price']!,
-                    imageUrl: data['imageUrl']!,
+              child: StreamBuilder<List<Map<String, dynamic>>>(
+                stream: _orderService.getAllOrdersWithUserData(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    print('Error loading orders: ${snapshot.error}');
+                    return const Center(child: Text("Error loading orders"));
+                  }
+
+                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(child: Text("No orders available"));
+                  }
+
+                  // Filter out completed orders
+                  final ordersWithUserData = snapshot.data!
+                      .where((orderData) =>
+                          !(orderData['order'] as OrderModel).isCompleted)
+                      .toList();
+
+                  if (ordersWithUserData.isEmpty) {
+                    return const Center(
+                        child: Text("No pending orders available"));
+                  }
+
+                  return ListView.builder(
+                    itemCount: ordersWithUserData.length,
+                    itemBuilder: (context, index) {
+                      final orderData = ordersWithUserData[index];
+                      final OrderModel order = orderData['order'] as OrderModel;
+                      // final UserModel user = orderData['user'] as UserModel;
+
+                      return ProductCard(
+                        orderId: order.OrderId,
+                        name: order.username,
+                        cartItems: order.cartItems,
+                        startLocation: 'Galle',
+                        destination:
+                            order.shippingAddress, // Update this if needed
+                        price: order.totalAmount.toString(),
+                        // imageUrl: user.profilePicture,
+                        phone: order.phone,
+                      );
+                    },
                   );
                 },
               ),
-            ),
+            )
           ],
         ),
       ),
@@ -167,27 +205,33 @@ class _TranspoterHomeState extends State<TranspoterHome> {
 
 // Refactored Card Widget
 class ProductCard extends StatelessWidget {
+  final String orderId;
   final String name;
-  final String package;
-  final String quantity;
+  final List<Map<String, dynamic>> cartItems;
   final String startLocation;
   final String destination;
   final String price;
-  final String imageUrl;
+  final String phone;
+  // final String? imageUrl;
 
   const ProductCard({
     Key? key,
     required this.name,
-    required this.package,
-    required this.quantity,
+    required this.cartItems,
     required this.startLocation,
     required this.destination,
     required this.price,
-    required this.imageUrl,
+    required this.phone,
+    required this.orderId,
+    // required this.imageUrl,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final String package =
+        cartItems.map((item) => item['title'] as String).join(', ');
+    final String quantity =
+        cartItems.map((item) => item['quantity'].toString()).join(', ');
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -204,11 +248,14 @@ class ProductCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    CircleAvatar(
-                      radius: 24,
-                      backgroundImage: NetworkImage(imageUrl),
-                    ),
-                    const SizedBox(width: 12),
+                    // CircleAvatar(
+                    //   radius: 24,
+                    //   backgroundImage: imageUrl != null && imageUrl!.isNotEmpty
+                    //       ? NetworkImage(imageUrl!)
+                    //       : AssetImage('assets/placeholder.png')
+                    //           as ImageProvider,
+                    // ),
+                    // const SizedBox(width: 12),
                     Text(
                       name,
                       style: GoogleFonts.poppins(
@@ -220,7 +267,7 @@ class ProductCard extends StatelessWidget {
                   ],
                 ),
                 Text(
-                  price,
+                  "Rs ${price}0",
                   style: GoogleFonts.poppins(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -276,8 +323,9 @@ class ProductCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Column(
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -298,6 +346,9 @@ class ProductCard extends StatelessWidget {
                       ),
                     ),
                   ],
+                ),
+                SizedBox(
+                  height: 10,
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -330,8 +381,16 @@ class ProductCard extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => TransporterScreen(
-                          initialIndex: 2,
+                        builder: (context) => DeliveryMapScreen(
+                          // initialIndex: 2,
+                          orderId: orderId,
+                          name: name,
+                          phone: phone,
+                          package: package,
+                          destination: destination,
+                          price: price,
+                          quantity: quantity,
+                          startLocation: startLocation,
                         ),
                       ),
                     );

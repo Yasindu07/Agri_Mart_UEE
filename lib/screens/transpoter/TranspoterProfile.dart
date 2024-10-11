@@ -1,8 +1,14 @@
+import 'dart:io';
+
 import 'package:agro_mart/screens/transporter_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:agro_mart/services/auth_services.dart';
 import 'package:agro_mart/screens/login_screen.dart';
+import 'package:image_picker/image_picker.dart';
 
 class TranspoterProfile extends StatefulWidget {
   const TranspoterProfile({super.key});
@@ -12,7 +18,154 @@ class TranspoterProfile extends StatefulWidget {
 }
 
 class _TranspoterProfileState extends State<TranspoterProfile> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+
+  User? _currentUser;
+  Map<String, dynamic>? _userData;
+  bool _isLoading = true;
+  String? _error;
+
+  File? _selectedImage;
+  bool _isUploading = false;
+
+  // User details variables
+  String _userId = '';
+  String _username = 'Anonymous';
+  String _userProfileImage =
+      'https://images.pexels.com/photos/2379003/pexels-photo-2379003.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
+  String _email = 'N/A';
+  String _address = 'N/A';
+  String _phoneNumber = 'N/A';
+  String _role = 'N/A';
+  String _accountCreated = 'N/A';
   bool isPasswordVisible = false;
+
+  Future<void> _fetchUserDetails() async {
+    try {
+      // Get the current user from FirebaseAuth
+      User? user = _auth.currentUser;
+      if (user == null) {
+        setState(() {
+          _error = 'No user is currently signed in.';
+          _isLoading = false;
+        });
+        // Optionally, redirect to the login page
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => LoginScreen()));
+        return;
+      }
+
+      setState(() {
+        _currentUser = user;
+        _userId = user.uid;
+        _email = user.email ?? 'N/A';
+      });
+
+      // Fetch additional user details from Firestore
+      DocumentSnapshot<Map<String, dynamic>> userDoc =
+          await _firestore.collection('users').doc(user.uid).get();
+
+      if (userDoc.exists) {
+        setState(() {
+          _userData = userDoc.data();
+          _username = _userData!['displayName'] ?? 'Anonymous';
+          _userProfileImage = _userData!['profilePicture'] ??
+              'https://images.pexels.com/photos/2379003/pexels-photo-2379003.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
+          _address = _userData!['address'] ?? 'N/A';
+          _phoneNumber = _userData!['phone'] ?? 'N/A';
+          _role = _userData!['role'] ?? 'N/A';
+          _accountCreated = _userData!['createdAt'] != null
+              ? (_userData!['createdAt'] as Timestamp)
+                  .toDate()
+                  .toLocal()
+                  .toString()
+              : 'N/A';
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _error = 'User data not found in Firestore.';
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Error fetching user details: $e';
+        _isLoading = false;
+      });
+      print('Error fetching user details: $e');
+    }
+  }
+
+  Future<void> _pickImage() async {
+    try {
+      final picker = ImagePicker();
+      final pickedFile =
+          await picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
+
+      if (pickedFile != null) {
+        setState(() {
+          _selectedImage = File(pickedFile.path);
+        });
+        await _uploadProfilePicture();
+      }
+    } catch (e) {
+      print('Error picking image: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error picking image: $e')),
+      );
+    }
+  }
+
+  /// Uploads the selected image to Firebase Storage and updates Firestore
+  Future<void> _uploadProfilePicture() async {
+    if (_selectedImage == null || _currentUser == null) return;
+
+    setState(() {
+      _isUploading = true;
+    });
+
+    try {
+      // Define the storage path
+      String fileName =
+          'profile_pictures/${_currentUser!.uid}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      Reference storageRef = _storage.ref().child(fileName);
+
+      // Upload the file
+      UploadTask uploadTask = storageRef.putFile(_selectedImage!);
+      TaskSnapshot snapshot = await uploadTask;
+
+      // Get the download URL
+      String downloadUrl = await snapshot.ref.getDownloadURL();
+
+      // Update the user's document in Firestore
+      await _firestore.collection('users').doc(_currentUser!.uid).update({
+        'profilePicture': downloadUrl,
+      });
+
+      // Update the local user data
+      setState(() {
+        _userProfileImage = downloadUrl;
+        _selectedImage = null;
+        _isUploading = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Profile picture updated successfully!')),
+      );
+    } catch (e) {
+      setState(() {
+        _isUploading = false;
+      });
+      print('Error uploading profile picture: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to upload profile picture: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:agro_mart/model/order_model.dart';
 import 'package:agro_mart/screens/transporter_screen.dart';
+import 'package:agro_mart/services/order_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -7,30 +10,7 @@ class TranspoterOrder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> orders = [
-      {
-        'orderId': '#943432242',
-        'status': 'Completed',
-        'startLocation': 'Matara',
-        'endLocation': 'Galle',
-        'rating': 4,
-      },
-      {
-        'orderId': '#943432243',
-        'status': 'In Progress',
-        'startLocation': 'Colombo',
-        'endLocation': 'Kandy',
-        'rating': 5,
-      },
-      {
-        'orderId': '#943432244',
-        'status': 'Pending',
-        'startLocation': 'Kurunegala',
-        'endLocation': 'Colombo',
-        'rating': 3,
-      },
-      // Add more orders as needed
-    ];
+    final OrderService _orderService = OrderService();
 
     return Scaffold(
       appBar: AppBar(
@@ -44,7 +24,7 @@ class TranspoterOrder extends StatelessWidget {
           },
         ),
         title: Text(
-          "Your deliveries",
+          "Your Deliveries",
           style: GoogleFonts.poppins(
             color: Colors.black,
             fontSize: 18,
@@ -55,16 +35,75 @@ class TranspoterOrder extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: orders.length,
-          itemBuilder: (context, index) {
-            final order = orders[index];
-            return OrderCard(
-              orderId: order['orderId'],
-              status: order['status'],
-              startLocation: order['startLocation'],
-              endLocation: order['endLocation'],
-              rating: order['rating'],
+        child: StreamBuilder<List<OrderModel>>(
+          stream: _orderService.getAllOrders(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (snapshot.hasError) {
+              return Center(
+                  child: Text("Error loading orders: ${snapshot.error}"));
+            }
+
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text("No orders available"));
+            }
+
+            // Filter orders based on isCompleted status
+            final completedOrders =
+                snapshot.data!.where((order) => order.isCompleted).toList();
+            final pendingOrders =
+                snapshot.data!.where((order) => !order.isCompleted).toList();
+
+            return ListView(
+              children: [
+                // Display completed orders
+                if (completedOrders.isNotEmpty) ...[
+                  Text(
+                    "Completed Orders",
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  ...completedOrders.map((order) => OrderCard(
+                        orderId: order.OrderId ?? "Unknown",
+                        status: "Completed",
+                        startLocation: order.cartItems.isNotEmpty
+                            ? order.cartItems[0]['startLocation'] ?? "Unknown"
+                            : "Unknown",
+                        endLocation: order.shippingAddress,
+                        rating: 5,
+                      )),
+                  const SizedBox(height: 16),
+                ],
+
+                // Display pending orders
+                if (pendingOrders.isNotEmpty) ...[
+                  Text(
+                    "Pending Orders",
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  ...pendingOrders.map((order) => OrderCard(
+                        orderId: order.OrderId ?? "Unknown",
+                        status: "Pending",
+                        startLocation: order.cartItems.isNotEmpty
+                            ? order.cartItems[0]['startLocation'] ?? "Galle"
+                            : "Unknown",
+                        endLocation: order.shippingAddress,
+                        rating: 5,
+                      )),
+                ],
+              ],
             );
           },
         ),
@@ -112,17 +151,21 @@ class OrderCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Order ID
-                  Text(
-                    "Order ID\n$orderId",
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                  Expanded(
+                    child: Text(
+                      "Order ID\n$orderId",
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                      overflow: TextOverflow.ellipsis, // Handle overflow
+                      maxLines: 2, // Limit to two lines
                     ),
                   ),
+                  const SizedBox(width: 8), // Add some spacing
                   // Order Status
                   Container(
                     padding:
@@ -137,6 +180,7 @@ class OrderCard extends StatelessWidget {
                         fontSize: 14,
                         color: Colors.white,
                       ),
+                      overflow: TextOverflow.ellipsis, // Handle overflow
                     ),
                   ),
                 ],
@@ -161,6 +205,7 @@ class OrderCard extends StatelessWidget {
                               fontWeight: FontWeight.w500,
                               color: Colors.black,
                             ),
+                            overflow: TextOverflow.ellipsis, // Handle overflow
                           ),
                         ],
                       ),
@@ -177,6 +222,7 @@ class OrderCard extends StatelessWidget {
                               fontWeight: FontWeight.w500,
                               color: Colors.black,
                             ),
+                            overflow: TextOverflow.ellipsis, // Handle overflow
                           ),
                         ],
                       ),
