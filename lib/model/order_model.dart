@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OrderModel {
+  String orderId;
   String userId;
   List<Map<String, dynamic>> cartItems;
   double totalAmount;
@@ -15,6 +16,7 @@ class OrderModel {
   DateTime orderDate;
 
   OrderModel({
+    required this.orderId,
     required this.userId,
     required this.cartItems,
     required this.totalAmount,
@@ -31,6 +33,7 @@ class OrderModel {
 
   Map<String, dynamic> toMap() {
     return {
+      'orderId': orderId,
       'userId': userId,
       'cartItems': cartItems,
       'totalAmount': totalAmount,
@@ -38,16 +41,17 @@ class OrderModel {
       'paymentMethod': paymentMethod,
       'username': username,
       'phone': phone,
-      'isChecked': false,
-      'isCompleted': false,
-      'isArrived': false,
-      'isStarted': false,
+      'isChecked': isChecked,
+      'isCompleted': isCompleted,
+      'isArrived': isArrived,
+      'isStarted': isStarted,
       'orderDate': Timestamp.fromDate(orderDate),
     };
   }
 
   factory OrderModel.fromMap(Map<String, dynamic> map) {
     return OrderModel(
+      orderId: map['orderId'] ?? '',
       userId: map['userId'] ?? '',
       cartItems: List<Map<String, dynamic>>.from(map['cartItems']),
       totalAmount: map['totalAmount']?.toDouble() ?? 0.0,

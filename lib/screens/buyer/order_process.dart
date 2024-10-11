@@ -64,6 +64,7 @@ class _OrderProcessPageState extends State<OrderProcessPage> {
 
       try {
         final order = custom_order.OrderModel(
+          orderId: '',
           userId: user.uid,
           cartItems: widget.cartItems.map((item) => item.toMap()).toList(),
           totalAmount: widget.totalAmount,
