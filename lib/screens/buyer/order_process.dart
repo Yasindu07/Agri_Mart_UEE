@@ -71,6 +71,10 @@ class _OrderProcessPageState extends State<OrderProcessPage> {
           paymentMethod: _paymentMethod,
           username: _nameController.text,
           phone: _phoneController.text,
+          isChecked: false,
+          isCompleted: false,
+          isArrived: false,
+          isStarted: false,
           orderDate: DateTime.now(),
         );
 

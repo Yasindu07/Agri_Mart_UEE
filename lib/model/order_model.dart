@@ -8,6 +8,10 @@ class OrderModel {
   String paymentMethod;
   String username;
   String phone;
+  bool isChecked = false;
+  bool isCompleted = false;
+  bool isArrived = false;
+  bool isStarted = false;
   DateTime orderDate;
 
   OrderModel({
@@ -18,6 +22,10 @@ class OrderModel {
     required this.paymentMethod,
     required this.username,
     required this.phone,
+    required this.isChecked,
+    required this.isCompleted,
+    required this.isArrived,
+    required this.isStarted,
     required this.orderDate,
   });
 
@@ -30,6 +38,10 @@ class OrderModel {
       'paymentMethod': paymentMethod,
       'username': username,
       'phone': phone,
+      'isChecked': false,
+      'isCompleted': false,
+      'isArrived': false,
+      'isStarted': false,
       'orderDate': Timestamp.fromDate(orderDate),
     };
   }
@@ -43,6 +55,10 @@ class OrderModel {
       paymentMethod: map['paymentMethod'] ?? '',
       username: map['username'] ?? '',
       phone: map['phone'] ?? '',
+      isChecked: map['isChecked'] ?? false,
+      isCompleted: map['isCompleted'] ?? false,
+      isArrived: map['isArrived'] ?? false,
+      isStarted: map['isStarted'] ?? false,
       orderDate: map['orderDate'] is Timestamp
           ? (map['orderDate'] as Timestamp).toDate()
           : DateTime.parse(map['orderDate']),
