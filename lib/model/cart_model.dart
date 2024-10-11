@@ -5,6 +5,7 @@ class CartItem {
   final int quantity;
   final double totalPrice;
   final String imageUrl;
+  final String farmerId; // Farmer ID field
 
   CartItem({
     required this.productId,
@@ -13,6 +14,7 @@ class CartItem {
     required this.quantity,
     required this.totalPrice,
     required this.imageUrl,
+    required this.farmerId, // Include this in the constructor
   });
 
   Map<String, dynamic> toMap() {
@@ -23,10 +25,10 @@ class CartItem {
       'quantity': quantity,
       'totalPrice': totalPrice,
       'imageUrl': imageUrl,
+      'farmerId': farmerId, // Add this field
     };
   }
 
-  // Add this method
   factory CartItem.fromMap(Map<String, dynamic> map) {
     return CartItem(
       productId: map['productId'],
@@ -35,6 +37,7 @@ class CartItem {
       quantity: map['quantity'],
       totalPrice: map['totalPrice'],
       imageUrl: map['imageUrl'],
+      farmerId: map['farmerId'], // Add this field
     );
   }
 }

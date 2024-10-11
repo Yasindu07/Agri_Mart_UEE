@@ -41,6 +41,7 @@ class _CartPageState extends State<CartPage> {
         _cartItems = items;
       });
     } catch (e) {
+      print('Failed to load cart items: $e'); // Debugging
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load cart items: $e')),
       );
@@ -68,8 +69,8 @@ class _CartPageState extends State<CartPage> {
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content:
-                Text('You need to be logged in to add items to your cart.')),
+          content: Text('You need to be logged in to add items to your cart.'),
+        ),
       );
       return;
     }
@@ -84,11 +85,12 @@ class _CartPageState extends State<CartPage> {
         imageUrl: widget.product.imageUrls.isNotEmpty
             ? widget.product.imageUrls[0]
             : '',
+        farmerId: widget.product.userId, // Provide the farmerId here
       );
 
       await _cartService.addToCart(cartItem);
       Fluttertoast.showToast(
-        msg: "Produt Added Success.",
+        msg: "Product Added Successfully.",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Theme.of(context).colorScheme.onPrimary,
@@ -109,7 +111,6 @@ class _CartPageState extends State<CartPage> {
     }
   }
 
-  // Method to delete a cart item
   Future<void> _deleteCartItem(String productId) async {
     try {
       await _cartService.deleteCartItem(productId);
@@ -136,7 +137,6 @@ class _CartPageState extends State<CartPage> {
     }
   }
 
-  // Calculate total price of all items in the cart
   double _calculateTotalCartPrice() {
     double total = 0.0;
     for (var item in _cartItems) {
@@ -166,7 +166,6 @@ class _CartPageState extends State<CartPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Product details
             SizedBox(height: screenHeight * 0.02),
             Row(
               children: [
@@ -214,8 +213,6 @@ class _CartPageState extends State<CartPage> {
               ],
             ),
             SizedBox(height: screenHeight * 0.03),
-
-            // Quantity selection
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -259,8 +256,6 @@ class _CartPageState extends State<CartPage> {
               ),
             ),
             SizedBox(height: screenHeight * 0.03),
-
-            // Add to Cart Button
             Center(
               child: ElevatedButton(
                 onPressed: _addToCart,
@@ -285,8 +280,6 @@ class _CartPageState extends State<CartPage> {
               ),
             ),
             SizedBox(height: screenHeight * 0.03),
-
-            // Display Cart Items
             Text(
               'Cart Items:',
               style: GoogleFonts.poppins(
@@ -328,23 +321,18 @@ class _CartPageState extends State<CartPage> {
                 },
               ),
             ),
-
-            // Checkout Button
-            // Checkout Button
             SizedBox(height: screenHeight * 0.03),
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: Center(
                 child: ElevatedButton(
                   onPressed: () {
-                    // Navigate to OrderProcessPage
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => OrderProcessPage(
-                          cartItems: _cartItems, // Pass cart items
-                          totalAmount:
-                              _calculateTotalCartPrice(), // Pass total amount
+                          cartItems: _cartItems,
+                          totalAmount: _calculateTotalCartPrice(),
                         ),
                       ),
                     );

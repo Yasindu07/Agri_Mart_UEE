@@ -384,7 +384,7 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
                     Text(
                       product.title,
                       style: GoogleFonts.poppins(
-                        fontSize: screenWidth * 0.036,
+                        fontSize: 16,
                         fontWeight: FontWeight.w400,
                         color: Colors.black,
                       ),
@@ -400,7 +400,7 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
                     Text(
                       'Category: ${product.category}',
                       style: GoogleFonts.poppins(
-                        fontSize: screenWidth * 0.028,
+                        fontSize: 14,
                         color: const Color.fromARGB(255, 99, 98, 98),
                       ),
                     ),
@@ -410,7 +410,7 @@ class _FarmerHomePageState extends State<FarmerHomePage> {
                         Text(
                           'Quantity: ${product.quantity}',
                           style: GoogleFonts.poppins(
-                            fontSize: screenWidth * 0.028,
+                            fontSize: 14,
                             color: const Color.fromARGB(255, 99, 98, 98),
                           ),
                         ),

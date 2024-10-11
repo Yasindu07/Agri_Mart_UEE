@@ -1,11 +1,8 @@
 import 'package:agro_mart/model/order_model.dart';
-import 'package:agro_mart/model/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class OrderService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Add a new order
   Future<void> addOrder(OrderModel order) async {
@@ -64,6 +61,17 @@ class OrderService {
             .map(
                 (doc) => OrderModel.fromMap(doc.data() as Map<String, dynamic>))
             .toList());
+  }
+
+  Stream<List<OrderModel>> getOrdersByFarmer(String farmerId) {
+    return _firestore.collection('orders').snapshots().map((snapshot) {
+      return snapshot.docs
+          .map((doc) => OrderModel.fromMap(doc.data() as Map<String, dynamic>))
+          .where((order) => order.cartItems.any((item) =>
+              item['farmerId'] ==
+              farmerId)) // Filtering based on farmerId in cart items
+          .toList();
+    });
   }
 
   // Stream to get all orders with user information
