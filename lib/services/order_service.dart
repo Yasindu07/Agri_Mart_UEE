@@ -21,7 +21,7 @@ class OrderService {
   }
 
   // Retrieve a specific order by ID
-  Future<OrderModel?> getOrderById(String orderId) async {
+  Future<OrderModel?> getOrderById(String? orderId) async {
     try {
       DocumentSnapshot docSnapshot =
           await _firestore.collection('orders').doc(orderId).get();
@@ -90,5 +90,47 @@ class OrderService {
               item['farmerId'] == farmerId)) // Filtering based on farmerId
           .toList();
     });
+  }
+
+  Stream<List<Map<String, dynamic>>> getAllOrdersWithUserData() {
+    return _firestore
+        .collection('orders')
+        .snapshots()
+        .asyncMap((snapshot) async {
+      List<Map<String, dynamic>> orderList = [];
+
+      try {
+        for (var doc in snapshot.docs) {
+          final orderData = doc.data();
+          print('Order raw data: $orderData');
+
+          if (orderData['userId'] is! String) {
+            throw Exception(
+                'Invalid userId type, expected String but found ${orderData['userId'].runtimeType}');
+          }
+
+          OrderModel order = OrderModel.fromMap(orderData);
+          orderList.add({
+            'order': order,
+          });
+        }
+      } catch (e) {
+        print('Error fetching orders with user data: $e');
+        throw Exception('Error fetching orders');
+      }
+
+      return orderList;
+    });
+  }
+
+  Future<void> updateOrderStatusDeliever(
+      String? orderId, Map<String, dynamic> updateData) async {
+    try {
+      await _firestore.collection('orders').doc(orderId).update(updateData);
+      print('Order updated successfully');
+    } catch (e) {
+      print('Failed to update order: $e');
+      throw Exception('Failed to update order: $e');
+    }
   }
 }
