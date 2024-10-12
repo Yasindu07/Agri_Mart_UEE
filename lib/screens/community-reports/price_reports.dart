@@ -51,7 +51,7 @@ Future<void> downloadPDF(String date) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: initialDate,
-      firstDate: today.subtract(Duration(days: 30)),
+      firstDate: today.subtract(Duration(days: 300)),
       lastDate: today,
     );
 
