@@ -5,7 +5,7 @@ class CartItem {
   final int quantity;
   final double totalPrice;
   final String imageUrl;
-  final String farmerId; // Farmer ID field
+  final String farmerId;
 
   CartItem({
     required this.productId,
@@ -14,7 +14,7 @@ class CartItem {
     required this.quantity,
     required this.totalPrice,
     required this.imageUrl,
-    required this.farmerId, // Include this in the constructor
+    required this.farmerId,
   });
 
   Map<String, dynamic> toMap() {
@@ -25,19 +25,27 @@ class CartItem {
       'quantity': quantity,
       'totalPrice': totalPrice,
       'imageUrl': imageUrl,
-      'farmerId': farmerId, // Add this field
+      'farmerId': farmerId,
     };
   }
 
   factory CartItem.fromMap(Map<String, dynamic> map) {
     return CartItem(
-      productId: map['productId'],
-      title: map['title'],
-      pricePerKg: map['pricePerKg'],
-      quantity: map['quantity'],
-      totalPrice: map['totalPrice'],
-      imageUrl: map['imageUrl'],
-      farmerId: map['farmerId'], // Add this field
+      productId: map['productId'] ?? 'unknown', // Provide default value if null
+      title: map['title'] ?? 'Unknown Product', // Default value if null
+      pricePerKg: map['pricePerKg'] != null
+          ? (map['pricePerKg'] as double)
+          : 0.0, // Handle null for double
+      quantity: map['quantity'] != null
+          ? (map['quantity'] as int)
+          : 1, // Handle null for int
+      totalPrice: map['totalPrice'] != null
+          ? (map['totalPrice'] as double)
+          : 0.0, // Handle null for double
+      imageUrl: map['imageUrl'] ??
+          'https://via.placeholder.com/150', // Default image URL if null
+      farmerId:
+          map['farmerId'] ?? 'unknown', // Provide default farmer ID if null
     );
   }
 }

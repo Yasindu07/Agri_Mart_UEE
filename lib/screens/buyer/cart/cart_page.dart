@@ -1,4 +1,5 @@
 import 'package:agro_mart/model/cart_model.dart';
+import 'package:agro_mart/screens/buyer/cart/productList_cartPage.dart';
 import 'package:agro_mart/screens/buyer/order_process.dart';
 import 'package:agro_mart/services/cart_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -76,16 +77,19 @@ class _CartPageState extends State<CartPage> {
     }
 
     try {
+      // Safely handle null values in product details
       final cartItem = CartItem(
-        productId: widget.product.id,
-        title: widget.product.title,
+        productId: widget.product.id ?? 'unknown', // Provide a default value
+        title: widget.product.title ??
+            'Unknown Title', // Default value if title is null
         pricePerKg: widget.product.pricePerKg,
         quantity: _quantity,
         totalPrice: _totalPrice,
         imageUrl: widget.product.imageUrls.isNotEmpty
             ? widget.product.imageUrls[0]
-            : '',
-        farmerId: widget.product.userId, // Provide the farmerId here
+            : 'https://via.placeholder.com/150', // Default image if no image available
+        farmerId: widget.product.userId ??
+            'unknown', // Default value if farmerId is null
       );
 
       await _cartService.addToCart(cartItem);
@@ -98,7 +102,7 @@ class _CartPageState extends State<CartPage> {
         fontSize: 16.0,
       );
 
-      await _fetchCartItems();
+      await _fetchCartItems(); // Refresh cart items after adding
     } catch (e) {
       Fluttertoast.showToast(
         msg: "Failed to add to cart: $e",
@@ -258,7 +262,15 @@ class _CartPageState extends State<CartPage> {
             SizedBox(height: screenHeight * 0.03),
             Center(
               child: ElevatedButton(
-                onPressed: _addToCart,
+                onPressed: () {
+                  _addToCart(); // Add parentheses to invoke the function
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CartDisplayPage(),
+                    ),
+                  );
+                },
                 child: Text(
                   'Add To Cart',
                   style: GoogleFonts.poppins(
@@ -280,84 +292,84 @@ class _CartPageState extends State<CartPage> {
               ),
             ),
             SizedBox(height: screenHeight * 0.03),
-            Text(
-              'Cart Items:',
-              style: GoogleFonts.poppins(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
+            // Text(
+            //   'Cart Items:',
+            //   style: GoogleFonts.poppins(
+            //     fontSize: 20,
+            //     fontWeight: FontWeight.bold,
+            //     color: Colors.black,
+            //   ),
+            // ),
             SizedBox(height: screenHeight * 0.02),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _cartItems.length,
-                itemBuilder: (context, index) {
-                  final item = _cartItems[index];
-                  return ListTile(
-                    leading: Image.network(
-                      item.imageUrl.isNotEmpty
-                          ? item.imageUrl
-                          : 'https://via.placeholder.com/150',
-                      width: 50,
-                      height: 50,
-                      fit: BoxFit.cover,
-                    ),
-                    title: Text(item.title, style: GoogleFonts.poppins()),
-                    subtitle: Text(
-                        '${item.quantity} x ${item.pricePerKg.toStringAsFixed(2)} Rs / Kg'),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('${item.totalPrice.toStringAsFixed(2)} Rs'),
-                        IconButton(
-                          icon: Icon(Icons.delete),
-                          onPressed: () => _deleteCartItem(item.productId),
-                          color: Colors.red,
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
+            // Expanded(
+            //   child: ListView.builder(
+            //     itemCount: _cartItems.length,
+            //     itemBuilder: (context, index) {
+            //       final item = _cartItems[index];
+            //       return ListTile(
+            //         leading: Image.network(
+            //           item.imageUrl.isNotEmpty
+            //               ? item.imageUrl
+            //               : 'https://via.placeholder.com/150',
+            //           width: 50,
+            //           height: 50,
+            //           fit: BoxFit.cover,
+            //         ),
+            //         title: Text(item.title, style: GoogleFonts.poppins()),
+            //         subtitle: Text(
+            //             '${item.quantity} x ${item.pricePerKg.toStringAsFixed(2)} Rs / Kg'),
+            //         trailing: Row(
+            //           mainAxisSize: MainAxisSize.min,
+            //           children: [
+            //             Text('${item.totalPrice.toStringAsFixed(2)} Rs'),
+            //             IconButton(
+            //               icon: Icon(Icons.delete),
+            //               onPressed: () => _deleteCartItem(item.productId),
+            //               color: Colors.red,
+            //             ),
+            //           ],
+            //         ),
+            //       );
+            //     },
+            //   ),
+            // ),
             SizedBox(height: screenHeight * 0.03),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => OrderProcessPage(
-                          cartItems: _cartItems,
-                          totalAmount: _calculateTotalCartPrice(),
-                        ),
-                      ),
-                    );
-                  },
-                  child: Text(
-                    'Checkout: ${_calculateTotalCartPrice().toStringAsFixed(2)} Rs',
-                    style: GoogleFonts.poppins(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: screenWidth * 0.2,
-                      vertical: screenHeight * 0.013,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(10.0),
+            //   child: Center(
+            //     child: ElevatedButton(
+            //       onPressed: () {
+            //         Navigator.push(
+            //           context,
+            //           MaterialPageRoute(
+            //             builder: (context) => OrderProcessPage(
+            //               cartItems: _cartItems,
+            //               totalAmount: _calculateTotalCartPrice(),
+            //             ),
+            //           ),
+            //         );
+            //       },
+            //       child: Text(
+            //         'Checkout: ${_calculateTotalCartPrice().toStringAsFixed(2)} Rs',
+            //         style: GoogleFonts.poppins(
+            //           fontSize: 20,
+            //           fontWeight: FontWeight.w600,
+            //           color: Colors.white,
+            //         ),
+            //       ),
+            //       style: ElevatedButton.styleFrom(
+            //         backgroundColor: Theme.of(context).colorScheme.primary,
+            //         padding: EdgeInsets.symmetric(
+            //           horizontal: screenWidth * 0.2,
+            //           vertical: screenHeight * 0.013,
+            //         ),
+            //         shape: RoundedRectangleBorder(
+            //           borderRadius: BorderRadius.circular(10),
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

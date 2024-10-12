@@ -4,6 +4,7 @@ import 'package:agro_mart/services/product_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:agro_mart/model/product_model.dart';
+import '../buyer/cart/productList_cartPage.dart';
 
 class ProductList extends StatefulWidget {
   final String userId; // Add userId parameter to track the logged-in user
@@ -60,22 +61,28 @@ class _ProductListState extends State<ProductList> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Welcome!',
+          'Product List',
           style: GoogleFonts.poppins(
-            color: Colors.black,
+            color: const Color(0xFFDDFFD6),
             fontWeight: FontWeight.bold,
             fontSize: 22.0,
           ),
         ),
+        backgroundColor: Color(0xFF28A745),
         actions: [
           IconButton(
             icon: Icon(
               Icons.shopping_cart,
-              color: Colors.black,
+              color: const Color(0xFFDDFFD6),
               size: 30.0,
             ),
             onPressed: () {
-              // Handle cart navigation
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CartDisplayPage(),
+                ),
+              );
             },
           ),
         ],
@@ -83,19 +90,19 @@ class _ProductListState extends State<ProductList> {
       body: Column(
         children: [
           // Header with Product List title
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: screenHeight * 0.015),
-            child: Center(
-              child: Text(
-                'Product List',
-                style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontSize: screenWidth * 0.06,
-                ),
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: EdgeInsets.symmetric(vertical: screenHeight * 0.015),
+          //   child: Center(
+          //     child: Text(
+          //       'Product List',
+          //       style: GoogleFonts.poppins(
+          //         fontWeight: FontWeight.bold,
+          //         color: Colors.black,
+          //         fontSize: screenWidth * 0.06,
+          //       ),
+          //     ),
+          //   ),
+          // ),
 
           // Search Bar
           Padding(
@@ -174,7 +181,7 @@ class _ProductListState extends State<ProductList> {
         height: cardHeight,
         child: Card(
           color:
-              selectedCategory == title ? Color(0xFF28A745) : Colors.grey[200],
+              selectedCategory == title ? Color(0xFF28A745) : Color(0xFFDDFFD6),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           elevation: selectedCategory == title ? 6 : 3, // Add elevation
@@ -275,64 +282,112 @@ class _ProductListState extends State<ProductList> {
       },
       child: Material(
         elevation: 2,
+        color: Color.fromARGB(255, 249, 253, 255), // Light green
         borderRadius: BorderRadius.circular(15),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(15),
           child: Padding(
             padding: EdgeInsets.all(screenWidth * 0.03),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Stack(
               children: [
-                // Product Image
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(screenWidth * 0.03),
-                  child: Image.network(
-                    product.imageUrls.isNotEmpty
-                        ? product.imageUrls[0]
-                        : 'https://via.placeholder.com/70',
-                    width: double.infinity,
-                    height: screenWidth * 0.25,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                SizedBox(height: screenHeight * 0.01),
-                // Product Details
-                Text(
-                  product.title,
-                  style: GoogleFonts.poppins(
-                    fontSize: screenWidth * 0.04,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
-                ),
-                SizedBox(height: screenHeight * 0.01),
-                Text(
-                  'Quantity: ${product.quantity} kg',
-                  style: GoogleFonts.poppins(
-                    fontSize: screenWidth * 0.032,
-                    color: const Color.fromARGB(255, 99, 98, 98),
-                  ),
-                ),
-                SizedBox(height: screenHeight * 0.01),
-
-                // Button to View Product
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.bottomLeft,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Handle button action
-                      },
-                      child: Text(
-                        'View',
-                        style: TextStyle(color: Colors.white),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Product Image with Bookmark Icon
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                      child: Image.network(
+                        product.imageUrls.isNotEmpty
+                            ? product.imageUrls[0]
+                            : 'https://via.placeholder.com/70',
+                        width: double.infinity,
+                        height: screenWidth * 0.25,
+                        fit: BoxFit.cover,
                       ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF28A745),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+                    ),
+                    SizedBox(height: screenHeight * 0.01),
+                    // Product Details
+                    Text(
+                      product.title,
+                      style: GoogleFonts.poppins(
+                        fontSize: screenWidth * 0.04,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
+                    ),
+                    SizedBox(height: screenHeight * 0.01),
+                    Text(
+                      'Quantity: ${product.quantity} kg',
+                      style: GoogleFonts.poppins(
+                        fontSize: screenWidth * 0.032,
+                        color: const Color.fromARGB(255, 99, 98, 98),
+                      ),
+                    ),
+                    SizedBox(height: screenHeight * 0.01),
+
+                    // Button to View Product
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.bottomLeft,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BuyerProductPreviewPage(
+                                  product: product,
+                                  userId: widget
+                                      .userId, // Pass the userId to the preview page
+                                ),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'View',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF28A745),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
                         ),
                       ),
+                    ),
+                  ],
+                ),
+
+                // Bookmark Icon
+                Positioned(
+                  top: 10, // Adjust this value to position the icon vertically
+                  right:
+                      10, // Adjust this value to position the icon horizontally
+                  child: Container(
+                    width: 30, // Width of the circular background
+                    height: 40, // Height of the circular background
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color.fromARGB(
+                          255, 255, 255, 255), // Background color
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2), // Shadow color
+                          blurRadius: 4, // Shadow blur
+                          offset: Offset(0, 2), // Shadow offset
+                        ),
+                      ],
+                    ),
+                    child: IconButton(
+                      padding: EdgeInsets.zero, // Remove default padding
+                      icon: Icon(
+                        Icons.bookmark_border_outlined,
+                        color: Color(0xFF5C5B64), // Icon color
+                      ),
+                      onPressed: () {
+                        // Handle bookmark action here
+                        // print('Bookmarked ${product.title}');
+                      },
                     ),
                   ),
                 ),
