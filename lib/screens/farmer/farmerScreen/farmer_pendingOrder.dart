@@ -1,9 +1,11 @@
+// farmer_pending_order.dart
 import 'dart:async';
 import 'package:agro_mart/model/cart_model.dart';
 import 'package:agro_mart/model/order_model.dart';
 import 'package:agro_mart/services/order_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class FarmerPendingOrder extends StatefulWidget {
@@ -47,12 +49,14 @@ class _FarmerPendingOrderState extends State<FarmerPendingOrder> {
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Available Orders',
-            style: GoogleFonts.poppins(
-              color: Colors.black,
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
-            )),
+        title: Text(
+          'Available Orders',
+          style: GoogleFonts.poppins(
+            color: Colors.black,
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         centerTitle: true,
       ),
       body: Column(
@@ -104,31 +108,24 @@ class _FarmerPendingOrderState extends State<FarmerPendingOrder> {
     }
 
     return StreamBuilder<List<OrderModel>>(
-      stream: _orderService
-          .getOrdersByFarmer(user.uid), // Pass the current farmer's userId
+      stream: _orderService.getUncheckedOrdersByFarmer(user.uid),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
         }
 
         if (snapshot.hasError) {
-          print('Error loading orders: ${snapshot.error}');
           return Center(child: Text('Error loading orders'));
         }
 
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          print('No pending orders found for farmer with ID: ${user.uid}');
           return Center(child: Text('No pending orders found'));
         }
 
-        orders = snapshot.data!;
-
-        // Debug: Print out the filtered orders
-        print('Number of orders found: ${orders.length}');
-        for (var order in orders) {
-          print(
-              'Order for userId: ${order.userId}, totalAmount: ${order.totalAmount}');
-        }
+        orders = snapshot.data!
+            .where(
+                (order) => order.username.toLowerCase().contains(searchQuery))
+            .toList();
 
         return ListView.builder(
           padding: EdgeInsets.symmetric(
@@ -137,9 +134,10 @@ class _FarmerPendingOrderState extends State<FarmerPendingOrder> {
           itemCount: orders.length,
           itemBuilder: (context, index) {
             return _buildOrderCard(
-                orders[index],
-                MediaQuery.of(context).size.width,
-                MediaQuery.of(context).size.height);
+              orders[index],
+              MediaQuery.of(context).size.width,
+              MediaQuery.of(context).size.height,
+            );
           },
         );
       },
@@ -150,133 +148,151 @@ class _FarmerPendingOrderState extends State<FarmerPendingOrder> {
       OrderModel order, double screenWidth, double screenHeight) {
     bool hasCartItems = order.cartItems.isNotEmpty;
 
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: screenHeight * 0.015),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      color: Theme.of(context).colorScheme.secondary,
-      child: Padding(
-        padding: EdgeInsets.all(screenWidth * 0.03),
-        child: Row(
-          children: [
-            if (hasCartItems && order.cartItems.first.containsKey('imageUrl'))
-              ClipRRect(
-                borderRadius: BorderRadius.circular(screenWidth * 0.03),
-                child: Image.network(
-                  order.cartItems.first['imageUrl'],
-                  width: screenWidth * 0.25,
-                  height: screenHeight * 0.10,
-                  fit: BoxFit.cover,
+    return Slidable(
+      key: Key(order.orderId),
+      startActionPane: ActionPane(
+        motion: const DrawerMotion(),
+        children: [
+          SlidableAction(
+            backgroundColor: Colors.green,
+            foregroundColor: Colors.white,
+            icon: Icons.check,
+            label: 'Approval',
+            borderRadius: BorderRadius.circular(15),
+            onPressed: (context) {
+              _orderService.updateIsChecked(order.orderId, true);
+            },
+          ),
+        ],
+      ),
+      child: Card(
+        margin: EdgeInsets.symmetric(vertical: screenHeight * 0.015),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        color: Theme.of(context).colorScheme.secondary,
+        child: Padding(
+          padding: EdgeInsets.all(screenWidth * 0.03),
+          child: Row(
+            children: [
+              if (hasCartItems && order.cartItems.first.containsKey('imageUrl'))
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                  child: Image.network(
+                    order.cartItems.first['imageUrl'],
+                    width: screenWidth * 0.25,
+                    height: screenHeight * 0.10,
+                    fit: BoxFit.cover,
+                  ),
+                )
+              else
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                  child: Image.asset(
+                    'assets/images/placeholder_image.png',
+                    width: screenWidth * 0.25,
+                    height: screenHeight * 0.10,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              )
-            else
-              ClipRRect(
-                borderRadius: BorderRadius.circular(screenWidth * 0.03),
-                child: Image.asset(
-                  'assets/images/placeholder_image.png',
-                  width: screenWidth * 0.25,
-                  height: screenHeight * 0.10,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            SizedBox(width: screenWidth * 0.03),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: hasCartItems
-                    ? order.cartItems.map((cartItemMap) {
-                        CartItem cartItem = CartItem.fromMap(cartItemMap);
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  cartItem.title,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
+              SizedBox(width: screenWidth * 0.03),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: hasCartItems
+                      ? order.cartItems.map((cartItemMap) {
+                          CartItem cartItem = CartItem.fromMap(cartItemMap);
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    cartItem.title,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
                                   ),
-                                ),
-                                Spacer(),
-                                Text(
-                                  '${order.orderDate.day}/${order.orderDate.month}/${order.orderDate.year}',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
+                                  Spacer(),
+                                  Text(
+                                    '${order.orderDate.day}/${order.orderDate.month}/${order.orderDate.year}',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: screenHeight * 0.01),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.location_on,
-                                  color: Colors.green,
-                                  size: 20,
-                                ),
-                                Text(
-                                  order.shippingAddress,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                                Spacer(),
-                                Text(
-                                  'Pending',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: screenHeight * 0.01),
-                            Text(
-                              'User: ${order.username}',
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
+                                ],
                               ),
-                            ),
-                            SizedBox(height: screenHeight * 0.01),
-                            Row(
-                              children: [
-                                Text(
-                                  'Rs. ${order.totalAmount}',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
+                              SizedBox(height: screenHeight * 0.01),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.location_on,
+                                    color: Colors.green,
+                                    size: 20,
                                   ),
-                                ),
-                                Spacer(),
-                                Text(
-                                  '${cartItem.quantity} Kg',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+                                  Text(
+                                    order.shippingAddress,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
                                   ),
+                                  Spacer(),
+                                  Text(
+                                    'Pending',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: screenHeight * 0.01),
+                              Text(
+                                'User: ${order.username}',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
                                 ),
-                              ],
+                              ),
+                              SizedBox(height: screenHeight * 0.01),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Rs. ${order.totalAmount}',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    '${cartItem.quantity} Kg',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        }).toList()
+                      : [
+                          Text(
+                            'No items found for this order',
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
                             ),
-                          ],
-                        );
-                      }).toList()
-                    : [
-                        Text(
-                          'No items found for this order',
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        )
-                      ],
+                          )
+                        ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

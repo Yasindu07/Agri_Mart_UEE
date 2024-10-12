@@ -71,7 +71,7 @@ class TranspoterOrder extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   ...completedOrders.map((order) => OrderCard(
-                        orderId: order.OrderId ?? "Unknown",
+                        orderId: order.orderId ?? "Unknown",
                         status: "Completed",
                         startLocation: order.cartItems.isNotEmpty
                             ? order.cartItems[0]['startLocation'] ?? "Unknown"
@@ -94,7 +94,7 @@ class TranspoterOrder extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   ...pendingOrders.map((order) => OrderCard(
-                        orderId: order.OrderId ?? "Unknown",
+                        orderId: order.orderId ?? "Unknown",
                         status: "Pending",
                         startLocation: order.cartItems.isNotEmpty
                             ? order.cartItems[0]['startLocation'] ?? "Galle"

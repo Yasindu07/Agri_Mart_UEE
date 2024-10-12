@@ -130,7 +130,10 @@ class _FarmerProductUpdateState extends State<FarmerProductUpdate> {
       );
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => FarmerScreen(initialIndex: 0)),
+        MaterialPageRoute(
+            builder: (context) => FarmerScreen(
+                  initialIndex: 0,
+                )),
       );
     } catch (e) {
       devtools.log('Error adding product: $e');

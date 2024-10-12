@@ -53,7 +53,7 @@ class _BottomNavState extends State<BottomNav> {
   final List<Widget> _screens = [
     const FarmerHomePage(),
     FarmerPendingOrder(),
-    const FarmerCompleteOrder(),
+    FarmerCompleteOrder(),
     FarmerFaq(),
     CommunityPostsPage(),
     MarketTrendsScreen(),
