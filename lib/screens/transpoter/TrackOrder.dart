@@ -1,3 +1,4 @@
+import 'package:agro_mart/screens/buyer/buyer_home.dart';
 import 'package:agro_mart/screens/transporter_screen.dart';
 import 'package:agro_mart/screens/transpoter/Rating.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,7 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
           onPressed: () {
             // Add back navigation functionality
             Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => TransporterScreen()));
+                MaterialPageRoute(builder: (context) => BuyerHomePage()));
           },
         ),
         title: Text(

@@ -1,3 +1,4 @@
+import 'package:agro_mart/screens/buyer/add_card_details.dart';
 import 'package:agro_mart/services/location_service.dart';
 import 'package:agro_mart/services/order_service.dart';
 import 'package:flutter/material.dart';
@@ -163,7 +164,16 @@ class _OrderProcessPageState extends State<OrderProcessPage> {
               _buildPaymentMethodOptions(),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _submitOrder,
+                onPressed: () {
+                  _submitOrder();
+                  // Add parentheses to invoke the function
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddPaymentMethodCardPage(),
+                    ),
+                  );
+                },
                 child: Text('Submit Order', style: GoogleFonts.poppins()),
               ),
             ],

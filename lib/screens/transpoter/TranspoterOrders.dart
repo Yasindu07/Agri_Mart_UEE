@@ -54,8 +54,9 @@ class TranspoterOrder extends StatelessWidget {
             // Filter orders based on isCompleted status
             final completedOrders =
                 snapshot.data!.where((order) => order.isCompleted).toList();
-            final pendingOrders =
-                snapshot.data!.where((order) => !order.isCompleted).toList();
+            final pendingOrders = snapshot.data!
+                .where((order) => order.isStarted && !order.isCompleted)
+                .toList();
 
             return ListView(
               children: [

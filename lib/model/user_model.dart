@@ -29,4 +29,16 @@ class UserModel {
       'profilePicture': profilePicture,
     };
   }
+
+  // Create UserModel instance from map
+  factory UserModel.fromMap(Map<String, dynamic>? map) {
+    return UserModel(
+      uid: map?['uid'],
+      email: map?['email'],
+      name: map?['name'] ?? '',
+      address: map?['address'] ?? '',
+      phoneNo: map?['phoneNo'] ?? '',
+      profilePicture: map?['profilePicture'] ?? '',
+    );
+  }
 }

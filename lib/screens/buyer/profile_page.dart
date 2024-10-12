@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:agro_mart/screens/buyer/order_histrory.dart';
 import 'package:agro_mart/screens/community-reports/edit_post.dart';
 import 'package:agro_mart/screens/login_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -398,7 +399,6 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
 
-            
             actions: <Widget>[
               TextButton(
                 onPressed: () {
@@ -410,8 +410,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 child: const Text('Cancel'),
               ),
-
-          
               TextButton(
                 onPressed: () {
                   _saveUserData(); // Save the data and close the dialog
@@ -448,7 +446,8 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
-    /// Builds the navigation buttons
+
+  /// Builds the navigation buttons
   Widget _buildNavigationButtons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -467,14 +466,29 @@ class _ProfilePageState extends State<ProfilePage> {
             textStyle: GoogleFonts.poppins(fontSize: 16, color: Colors.white),
           ),
         ),
-        
+        ElevatedButton.icon(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      OrderHistoryPage()), // Navigate to OrderHistoryPage
+            );
+          },
+          icon: Icon(Icons.history), // Icon for order history
+          label: Text('Order History'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor:
+                const Color.fromARGB(255, 235, 233, 233), // Background color
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            textStyle: GoogleFonts.poppins(fontSize: 16, color: Colors.white),
+          ),
+        ),
       ],
     );
   }
 
   Widget _buildLogoutButton(BuildContext context) {
-
-    
     return ElevatedButton(
       onPressed: () async {
         await FirebaseAuth.instance.signOut();

@@ -1,3 +1,5 @@
+import 'package:agro_mart/screens/buyer/buyer_home.dart';
+import 'package:agro_mart/screens/transpoter/TrackOrder.dart';
 import 'package:flutter/material.dart';
 
 class SuccessPage extends StatelessWidget {
@@ -52,7 +54,14 @@ class SuccessPage extends StatelessWidget {
                 SizedBox(height: 30),
                 ElevatedButton(
                   onPressed: () {
-                    // context : 
+                    // Navigator.popUntil(context, (route) => route.isFirst);
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TrackOrderScreen(),
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green, // Button color
@@ -65,7 +74,7 @@ class SuccessPage extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    "Back to home",
+                    "Track Order",
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white,

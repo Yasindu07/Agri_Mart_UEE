@@ -39,13 +39,13 @@ class _BuyerProductPreviewPageState extends State<BuyerProductPreviewPage> {
                 color: Colors.black,
               ),
             ),
-            Text(
-              'step 2/2',
-              style: GoogleFonts.poppins(
-                fontSize: screenWidth * 0.04,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
+            // Text(
+            //   'step 2/2',
+            //   style: GoogleFonts.poppins(
+            //     fontSize: screenWidth * 0.04,
+            //     color: Theme.of(context).colorScheme.primary,
+            //   ),
+            // ),
           ],
         ),
       ),

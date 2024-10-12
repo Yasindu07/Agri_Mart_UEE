@@ -72,7 +72,7 @@ class _BuyerHomePageState extends State<BuyerHomePage> {
 
   // List of texts corresponding to each market view image
   final List<String> _marketViewTexts = [
-    'Mangoe', // Text for Mangoes image
+    'Mango', // Text for Mangoes image
     'Orange', // Text for Orange image
     'Tomatoe', // Text for Tomato image
     'Green Beans', // Text for Green Beans image
@@ -80,40 +80,55 @@ class _BuyerHomePageState extends State<BuyerHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // Get screen width and height
+    final screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(90), // Set custom height
+        preferredSize: const Size.fromHeight(130), // Keep custom height
         child: ClipRRect(
           borderRadius: const BorderRadius.only(
             bottomLeft: Radius.circular(30),
             bottomRight: Radius.circular(30),
           ), // Add border radius to the AppBar
           child: AppBar(
-            elevation: 1, // Remove AppBar shadow
-            backgroundColor: Color(0xFF28A745),
-            title: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Color.fromARGB(255, 255, 255, 255),
-                        prefixIcon: const Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide.none,
-                        ),
-                        hintText: 'Search...',
-                      ),
-                    ),
-                  ),
-                ],
+            elevation: 5, // AppBar shadow
+            backgroundColor: const Color(0xFF28A745), // Green color
+            automaticallyImplyLeading: false, // No back button
+            title: const Text(
+              'AgroMart', // App name or other title if needed
+              style: TextStyle(
+                fontSize: 24, // Adjust font size
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
             ),
-            automaticallyImplyLeading: false, // No back button
+            bottom: PreferredSize(
+              preferredSize:
+                  const Size.fromHeight(50), // Height of the search bar
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0, vertical: 10.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: const Color.fromARGB(255, 255, 255, 255),
+                          prefixIcon: const Icon(Icons.search),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide.none,
+                          ),
+                          hintText: 'Search...',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
       ),
@@ -187,7 +202,7 @@ class _BuyerHomePageState extends State<BuyerHomePage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
-                'Market View',
+                'Best Selling Products',
                 style:
                     const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
@@ -200,7 +215,8 @@ class _BuyerHomePageState extends State<BuyerHomePage> {
               child: GridView.count(
                 shrinkWrap: true,
                 crossAxisCount: 2,
-                childAspectRatio: 2 / 1.2, // Adjust aspect ratio if needed
+                childAspectRatio: (screenSize.width / 2) /
+                    (140), // Adjust aspect ratio based on screen width
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
                 physics: const NeverScrollableScrollPhysics(),
@@ -228,9 +244,9 @@ class _BuyerHomePageState extends State<BuyerHomePage> {
                           children: [
                             // Image Section
                             Container(
-                              width:
-                                  100, // Set width for the image container (70% of total width)
-                              height: 140, // Increased height
+                              width: screenSize.width *
+                                  0.28, // Set width for the image container (35% of screen width)
+                              height: 130, // Increased height
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 image: DecorationImage(
