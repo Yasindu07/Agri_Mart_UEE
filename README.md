@@ -6,8 +6,7 @@
 
 
 <p align="center">
-<a href="https://github.com/Yasindu07/Agri_Mart_UEE">📱 Visit this Project</a>
-</p>
+  <img src="poster.jpg" width="400" /></p>
 
 <h2 id="technologies">💻 Technologies</h2>
 
